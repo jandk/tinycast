@@ -87,14 +87,14 @@ final class TypeClassWriter {
         // Constructors
         builder.addMethod(MethodSpec.constructorBuilder()
             .addParameter(AtomicLong.class, "hasher")
-            .addStatement("super($T.$L, hasher)", CastNodeID.class, CastNodeID.ROOT)
+            .addStatement("super($T.$L, hasher)", CastNodeID.class, type.type())
             .build());
 
         builder.addMethod(MethodSpec.constructorBuilder()
             .addParameter(long.class, "hash")
             .addParameter(ParameterizedTypeName.get(Map.class, String.class, CastProperty.class), "properties")
             .addParameter(ParameterizedTypeName.get(List.class, CastNode.class), "children")
-            .addStatement("super($T.$L, hash, properties, children)", CastNodeID.class, CastNodeID.ROOT)
+            .addStatement("super($T.$L, hash, properties, children)", CastNodeID.class, type.type())
             .addComment("TODO: Validation")
             .build());
 

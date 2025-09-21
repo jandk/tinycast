@@ -1,6 +1,7 @@
 package be.twofold.tinycast;
 
 import java.io.*;
+import java.nio.*;
 import java.util.*;
 
 final class CastReader {
@@ -50,7 +51,99 @@ final class CastReader {
         return new Cast(rootNodes);
     }
 
-    private CastNode readNode() {
-        return null;
+    private CastNode readNode() throws IOException {
+        CastNodeID identifier = CastNodeID.fromValue(reader.readInt());
+        int nodeSize = reader.readInt();
+        long nodeHash = reader.readLong();
+        int propertyCount = reader.readInt();
+        int childCount = reader.readInt();
+
+        Map<String, CastProperty> properties = new LinkedHashMap<>(propertyCount);
+        for (int i = 0; i < propertyCount; i++) {
+            CastProperty property = readProperty(identifier);
+            properties.put(property.getName(), property);
+        }
+
+        List<CastNode> children = new ArrayList<>(childCount);
+        for (int i = 0; i < childCount; i++) {
+            children.add(readNode());
+        }
+
+        return CastNodes.create(identifier, nodeHash, properties, children);
+    }
+
+    private CastProperty readProperty(CastNodeID typeId) throws IOException {
+        CastPropertyID identifier = CastPropertyID.fromValue(reader.readShort());
+        short nameSize = reader.readShort();
+        int arrayLength = reader.readInt();
+
+        String name = reader.readString(nameSize);
+        boolean isArray = ARRAY_TYPES.getOrDefault(typeId, Set.of()).contains(name)
+            || (typeId == CastNodeID.MESH && (name.startsWith("c") || name.startsWith("u")));
+        Object value = isArray ? readArray(identifier, arrayLength) : readSingle(identifier);
+
+        return new CastProperty(identifier, name, value);
+    }
+
+    private Object readSingle(CastPropertyID identifier) throws IOException {
+        switch (identifier) {
+            case BYTE:
+                return reader.readByte();
+            case SHORT:
+                return reader.readShort();
+            case INT:
+                return reader.readInt();
+            case LONG:
+                return reader.readLong();
+            case FLOAT:
+                return reader.readFloat();
+            case DOUBLE:
+                return reader.readDouble();
+            case STRING:
+                return reader.readCString();
+            case VECTOR2: {
+                float x = reader.readFloat();
+                float y = reader.readFloat();
+                return new Vec2(x, y);
+            }
+            case VECTOR3: {
+                float x = reader.readFloat();
+                float y = reader.readFloat();
+                float z = reader.readFloat();
+                return new Vec3(x, y, z);
+            }
+            case VECTOR4: {
+                float x = reader.readFloat();
+                float y = reader.readFloat();
+                float z = reader.readFloat();
+                float w = reader.readFloat();
+                return new Vec4(x, y, z, w);
+            }
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    private Buffer readArray(CastPropertyID identifier, int arrayLength) throws IOException {
+        ByteBuffer buffer = reader.readBuffer(arrayLength * identifier.getSize());
+        switch (identifier) {
+            case BYTE:
+                return buffer;
+            case SHORT:
+                return buffer.asShortBuffer();
+            case INT:
+                return buffer.asIntBuffer();
+            case LONG:
+                return buffer.asLongBuffer();
+            case FLOAT:
+            case VECTOR2:
+            case VECTOR3:
+            case VECTOR4:
+                return buffer.asFloatBuffer();
+            case DOUBLE:
+                return buffer.asDoubleBuffer();
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 }

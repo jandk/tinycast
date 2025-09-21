@@ -213,7 +213,7 @@ final class TypeGenerator {
             }
         }
 
-        for (var type : arrayTypes.entrySet()) {
+        for (Map.Entry<CastNodeID, List<String>> type : arrayTypes.entrySet()) {
             String props = type.getValue().stream()
                 .collect(Collectors.joining("\", \"", "\"", "\""));
             System.out.println("CastNodeID." + type.getKey() + ", Set.of(" + props + "),");

@@ -8,7 +8,7 @@ public final class Cast extends AbstractList<CastNode> {
     private static final long INITIAL_HASH = 0x5A4C524E454C4156L;
 
     private final AtomicLong hasher;
-    final List<CastNode> rootNodes;
+    private final List<CastNode> rootNodes;
 
     Cast(List<CastNode> rootNodes) {
         this(0, rootNodes);
@@ -31,17 +31,23 @@ public final class Cast extends AbstractList<CastNode> {
         return CastReader.read(in);
     }
 
-    public void write(OutputStream out) throws IOException {
-        CastWriter.write(this, out);
+    @Override
+    public int size() {
+        return rootNodes.size();
     }
 
     @Override
     public CastNode get(int index) {
-        return null;
+        return rootNodes.get(index);
     }
 
-    @Override
-    public int size() {
-        return 0;
+    public CastNodes.Root createRoot() {
+        CastNodes.Root root = new CastNodes.Root(hasher);
+        rootNodes.add(root);
+        return root;
+    }
+
+    public void write(OutputStream out) throws IOException {
+        CastWriter.write(this, out);
     }
 }

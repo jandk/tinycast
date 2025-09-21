@@ -37,7 +37,7 @@ public abstract class CastNode {
         return hash;
     }
 
-    public int getLength() {
+    int getLength() {
         int result = 24;
         for (CastProperty property : properties.values()) {
             result += property.getLength();
