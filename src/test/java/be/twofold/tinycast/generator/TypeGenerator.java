@@ -1,6 +1,6 @@
 package be.twofold.tinycast.generator;
 
-import be.twofold.tinycast.CastNodeID;
+import be.twofold.tinycast.*;
 import be.twofold.tinycast.generator.model.*;
 
 import java.io.*;
@@ -213,11 +213,11 @@ final class TypeGenerator {
             }
         }
 
-//        for (var type : arrayTypes.entrySet()) {
-//            String props = type.getValue().stream()
-//                .collect(Collectors.joining("\", \"", "\"", "\""));
-//            System.out.println("CastNodeID." + type.getKey() + ", Set.of(" + props + "),");
-//        }
+        for (var type : arrayTypes.entrySet()) {
+            String props = type.getValue().stream()
+                .collect(Collectors.joining("\", \"", "\"", "\""));
+            System.out.println("CastNodeID." + type.getKey() + ", Set.of(" + props + "),");
+        }
 
         new TypeClassWriter().generate(types);
     }

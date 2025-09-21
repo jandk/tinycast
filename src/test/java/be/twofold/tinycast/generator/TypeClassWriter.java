@@ -13,38 +13,66 @@ import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
 final class TypeClassWriter {
-    private static final String PACKAGE_NAME = "be.twofold.tinycast.nodes";
-    private static final ClassName BASE_CLASS = ClassName.get(CastNode.class);
+    private static final String PACKAGE_NAME = "be.twofold.tinycast";
+    private static final ClassName OUTER_CLASS = ClassName.get(PACKAGE_NAME, "CastNodes");
+    private static final ClassName SUPER_CLASS = ClassName.get(CastNode.class);
 
     private final Map<List<String>, ClassName> enumLookup = new HashMap<>();
 
     void generate(List<TypeDef> types) throws IOException {
+        TypeSpec.Builder builder = TypeSpec.classBuilder(OUTER_CLASS)
+            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+            .addMethod(MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PRIVATE)
+                .build());
+
+        builder.addMethod(generateCreate());
+
         buildEnumLookup(types);
-
-        List<TypeSpec> typeSpecs = new ArrayList<>();
-        for (var entry : enumLookup.entrySet()) {
-            typeSpecs.add(generateEnum(entry.getValue(), entry.getKey()));
+        for (Map.Entry<List<String>, ClassName> entry : enumLookup.entrySet()) {
+            builder.addType(generateEnum(entry.getValue(), entry.getKey()));
         }
 
-        for (var type : types) {
-            typeSpecs.add(generateClass(type));
+        for (TypeDef type : types) {
+            builder.addType(generateClass(type));
         }
 
-        for (var type : typeSpecs) {
-            JavaFile
-                .builder(PACKAGE_NAME, type)
-                .skipJavaLangImports(true)
-                .indent("    ")
-                .build()
-                .writeTo(Path.of("src/main/java"));
+        JavaFile
+            .builder(PACKAGE_NAME, builder.build())
+            .skipJavaLangImports(true)
+            .indent("    ")
+            .build()
+            .writeTo(Path.of("src/main/java"));
+    }
+
+    private MethodSpec generateCreate() {
+        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("create")
+            .addModifiers(Modifier.STATIC)
+            .returns(CastNode.class)
+            .addParameter(CastNodeID.class, "identifier")
+            .addParameter(long.class, "nodeHash")
+            .addParameter(ParameterizedTypeName.get(Map.class, String.class, CastProperty.class), "properties")
+            .addParameter(ParameterizedTypeName.get(List.class, CastNode.class), "children")
+            .beginControlFlow("switch (identifier)");
+
+        for (CastNodeID id : CastNodeID.values()) {
+            methodBuilder
+                .beginControlFlow("case $L:", id)
+                .addStatement("return new $T(nodeHash, properties, children)", OUTER_CLASS.nestedClass(className(id)))
+                .endControlFlow();
         }
+
+        return methodBuilder
+            .endControlFlow()
+            .addStatement("throw new $T()", UnsupportedOperationException.class)
+            .build();
     }
 
     private TypeSpec generateClass(TypeDef type) {
-        var className = ClassName.get(PACKAGE_NAME, className(type.type()));
+        ClassName className = OUTER_CLASS.nestedClass(className(type.type()));
         TypeSpec.Builder builder = TypeSpec.classBuilder(className)
-            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-            .superclass(BASE_CLASS);
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            .superclass(SUPER_CLASS);
 
         List<PropertyDef> indexedProperties = type.properties().stream()
             .filter(prop -> prop.key().contains("%d"))
@@ -153,19 +181,19 @@ final class TypeClassWriter {
 
     private List<MethodSpec> generateNodeMethods(CastNodeID child) {
         String childClassName = className(child);
-        TypeName childType = ClassName.get(PACKAGE_NAME, childClassName);
+        TypeName childType = OUTER_CLASS.nestedClass(childClassName);
         TypeName returnType = child == CastNodeID.SKELETON
-            ? ParameterizedTypeName.get(ClassName.get(Optional.class), ClassName.get(PACKAGE_NAME, "Skeleton"))
+            ? ParameterizedTypeName.get(ClassName.get(Optional.class), OUTER_CLASS.nestedClass("Skeleton"))
             : ParameterizedTypeName.get(ClassName.get(List.class), childType);
         String methodName = child == CastNodeID.SKELETON ? "getChildOfType" : "getChildrenOfType";
 
-        var getter = MethodSpec.methodBuilder("get" + multiple(childClassName))
+        MethodSpec getter = MethodSpec.methodBuilder("get" + multiple(childClassName))
             .addModifiers(Modifier.PUBLIC)
             .returns(returnType)
             .addStatement("return $L($T.class)", methodName, childType)
             .build();
 
-        var creator = MethodSpec.methodBuilder("create" + childClassName)
+        MethodSpec creator = MethodSpec.methodBuilder("create" + childClassName)
             .addModifiers(Modifier.PUBLIC)
             .returns(childType)
             .addStatement("return createChild(new $T(hasher))", childType)
@@ -285,7 +313,7 @@ final class TypeClassWriter {
                     continue;
                 }
                 String sanitized = wordsToCamelCase(property.name(), true);
-                ClassName name = ClassName.get(PACKAGE_NAME, sanitized);
+                ClassName name = OUTER_CLASS.nestedClass(sanitized);
                 if (enumLookup.containsKey(values) && !enumLookup.get(values).equals(name)) {
                     throw new IllegalArgumentException("not unique");
                 }
@@ -295,7 +323,7 @@ final class TypeClassWriter {
     }
 
     private TypeSpec generateEnum(ClassName name, List<String> values) {
-        var fromMethod = MethodSpec.methodBuilder("from")
+        MethodSpec fromMethod = MethodSpec.methodBuilder("from")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .returns(name)
             .addParameter(Object.class, "o")

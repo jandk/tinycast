@@ -31,7 +31,7 @@ public final class Cast extends AbstractList<CastNode> {
         return CastReader.read(in);
     }
 
-    public void write(OutputStream out) {
+    public void write(OutputStream out) throws IOException {
         CastWriter.write(this, out);
     }
 

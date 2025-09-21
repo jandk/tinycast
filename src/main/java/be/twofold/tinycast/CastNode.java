@@ -9,7 +9,7 @@ import java.util.stream.*;
 public abstract class CastNode {
     private final CastNodeID identifier;
     private final long hash;
-    protected final AtomicLong hasher;
+    final AtomicLong hasher;
     final Map<String, CastProperty> properties;
     final List<CastNode> children;
 
@@ -21,11 +21,11 @@ public abstract class CastNode {
         this.children = new ArrayList<>(children);
     }
 
-    protected CastNode(CastNodeID identifier, AtomicLong hasher) {
+    CastNode(CastNodeID identifier, AtomicLong hasher) {
         this(identifier, hasher.getAndIncrement(), hasher, Map.of(), List.of());
     }
 
-    protected CastNode(CastNodeID identifier, long hash, Map<String, CastProperty> properties, List<CastNode> children) {
+    CastNode(CastNodeID identifier, long hash, Map<String, CastProperty> properties, List<CastNode> children) {
         this(identifier, hash, null, properties, children);
     }
 
@@ -67,16 +67,16 @@ public abstract class CastNode {
             .map(p -> mapper.apply(p.getValue()));
     }
 
-    protected <T extends CastNode> T createChild(T child) {
+    <T extends CastNode> T createChild(T child) {
         children.add(child);
         return child;
     }
 
-    protected void createProperty(CastPropertyID identifier, String name, Object value) {
+    void createProperty(CastPropertyID identifier, String name, Object value) {
         properties.put(name, new CastProperty(identifier, name, value));
     }
 
-    protected void createIntProperty(String name, int value) {
+    void createIntProperty(String name, int value) {
         long l = Integer.toUnsignedLong(value);
         if (l <= 0xFF) {
             createProperty(CastPropertyID.BYTE, name, (byte) l);
@@ -87,7 +87,7 @@ public abstract class CastNode {
         }
     }
 
-    protected void createIntBufferProperty(String name, Buffer value) {
+    void createIntBufferProperty(String name, Buffer value) {
         Buffer buffer = Buffers.shrink(value);
         if (buffer instanceof ByteBuffer) {
             createProperty(CastPropertyID.BYTE, name, buffer);
@@ -100,7 +100,7 @@ public abstract class CastNode {
         }
     }
 
-    protected boolean parseBoolean(Object value) {
+    boolean parseBoolean(Object value) {
         int i = ((Number) value).intValue();
         switch (i) {
             case 0:
