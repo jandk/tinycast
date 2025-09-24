@@ -1,39 +1,22 @@
 package be.twofold.tinycast;
 
 import java.io.*;
-import java.lang.invoke.*;
 import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
 final class BinaryReader implements Closeable {
-    private static final VarHandle VH_SHORT = MethodHandles
-        .byteArrayViewVarHandle(short[].class, ByteOrder.LITTLE_ENDIAN);
-    private static final VarHandle VH_INT = MethodHandles
-        .byteArrayViewVarHandle(int[].class, ByteOrder.LITTLE_ENDIAN);
-    private static final VarHandle VH_LONG = MethodHandles
-        .byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
-    private static final VarHandle VH_FLOAT = MethodHandles
-        .byteArrayViewVarHandle(float[].class, ByteOrder.LITTLE_ENDIAN);
-    private static final VarHandle VH_DOUBLE = MethodHandles
-        .byteArrayViewVarHandle(double[].class, ByteOrder.LITTLE_ENDIAN);
+    private final ByteBuffer buffer = ByteBuffer
+        .allocate(8)
+        .order(ByteOrder.LITTLE_ENDIAN);
 
-    private final byte[] buffer = new byte[8];
     private final InputStream in;
 
-    public BinaryReader(InputStream in) {
+    BinaryReader(InputStream in) {
         this.in = Objects.requireNonNull(in);
     }
 
-    public byte[] readBytes(int length) throws IOException {
-        byte[] bytes = in.readNBytes(length);
-        if (bytes.length != length) {
-            throw new EOFException("Expected " + length + " bytes but got " + bytes.length);
-        }
-        return bytes;
-    }
-
-    public byte readByte() throws IOException {
+    byte readByte() throws IOException {
         int read = in.read();
         if (read < 0) {
             throw new EOFException("Unexpected end of stream");
@@ -41,32 +24,32 @@ final class BinaryReader implements Closeable {
         return (byte) read;
     }
 
-    public short readShort() throws IOException {
+    short readShort() throws IOException {
         buffer(Short.BYTES);
-        return (short) VH_SHORT.get(buffer, 0);
+        return buffer.getShort(0);
     }
 
-    public int readInt() throws IOException {
+    int readInt() throws IOException {
         buffer(Integer.BYTES);
-        return (int) VH_INT.get(buffer, 0);
+        return buffer.getInt(0);
     }
 
-    public long readLong() throws IOException {
+    long readLong() throws IOException {
         buffer(Long.BYTES);
-        return (long) VH_LONG.get(buffer, 0);
+        return buffer.getLong(0);
     }
 
-    public float readFloat() throws IOException {
+    float readFloat() throws IOException {
         buffer(Float.BYTES);
-        return (float) VH_FLOAT.get(buffer, 0);
+        return buffer.getFloat(0);
     }
 
-    public double readDouble() throws IOException {
+    double readDouble() throws IOException {
         buffer(Double.BYTES);
-        return (double) VH_DOUBLE.get(buffer, 0);
+        return buffer.getDouble(0);
     }
 
-    public String readCString() throws IOException {
+    String readCString() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         while (true) {
             byte b = readByte();
@@ -78,22 +61,30 @@ final class BinaryReader implements Closeable {
         return out.toString(StandardCharsets.UTF_8);
     }
 
-    public String readString(int length) throws IOException {
+    String readString(int length) throws IOException {
         byte[] bytes = readBytes(length);
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
-    public ByteBuffer readBuffer(int length) throws IOException {
+    ByteBuffer readBuffer(int length) throws IOException {
         byte[] bytes = readBytes(length);
         return ByteBuffer.wrap(bytes)
             .order(ByteOrder.LITTLE_ENDIAN);
     }
 
     private void buffer(int length) throws IOException {
-        int read = in.read(buffer, 0, length);
+        int read = in.read(buffer.array(), 0, length);
         if (read != length) {
             throw new EOFException("Expected " + length + " bytes but got " + read);
         }
+    }
+
+    private byte[] readBytes(int length) throws IOException {
+        byte[] bytes = in.readNBytes(length);
+        if (bytes.length != length) {
+            throw new EOFException("Expected " + length + " bytes but got " + bytes.length);
+        }
+        return bytes;
     }
 
     @Override

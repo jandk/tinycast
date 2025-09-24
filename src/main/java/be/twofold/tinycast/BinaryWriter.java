@@ -1,59 +1,50 @@
 package be.twofold.tinycast;
 
 import java.io.*;
-import java.lang.invoke.*;
 import java.nio.*;
 import java.util.*;
 
 final class BinaryWriter implements Closeable {
-    private static final VarHandle VH_SHORT = MethodHandles
-        .byteArrayViewVarHandle(short[].class, ByteOrder.LITTLE_ENDIAN);
-    private static final VarHandle VH_INT = MethodHandles
-        .byteArrayViewVarHandle(int[].class, ByteOrder.LITTLE_ENDIAN);
-    private static final VarHandle VH_LONG = MethodHandles
-        .byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
-    private static final VarHandle VH_FLOAT = MethodHandles
-        .byteArrayViewVarHandle(float[].class, ByteOrder.LITTLE_ENDIAN);
-    private static final VarHandle VH_DOUBLE = MethodHandles
-        .byteArrayViewVarHandle(double[].class, ByteOrder.LITTLE_ENDIAN);
+    private final ByteBuffer buffer = ByteBuffer
+        .allocate(8)
+        .order(ByteOrder.LITTLE_ENDIAN);
 
-    private final byte[] buffer = new byte[8];
     private final OutputStream out;
 
-    public BinaryWriter(OutputStream out) {
+    BinaryWriter(OutputStream out) {
         this.out = Objects.requireNonNull(out);
     }
 
-    public void writeByte(byte b) throws IOException {
+    void writeByte(byte b) throws IOException {
         out.write(b);
     }
 
-    public void writeShort(short value) throws IOException {
-        VH_SHORT.set(buffer, 0, value);
-        out.write(buffer, 0, Short.BYTES);
+    void writeShort(short value) throws IOException {
+        buffer.putShort(0, value);
+        out.write(buffer.array(), 0, Short.BYTES);
     }
 
-    public void writeInt(int value) throws IOException {
-        VH_INT.set(buffer, 0, value);
-        out.write(buffer, 0, Integer.BYTES);
+    void writeInt(int value) throws IOException {
+        buffer.putInt(0, value);
+        out.write(buffer.array(), 0, Integer.BYTES);
     }
 
-    public void writeLong(long value) throws IOException {
-        VH_LONG.set(buffer, 0, value);
-        out.write(buffer, 0, Long.BYTES);
+    void writeLong(long value) throws IOException {
+        buffer.putLong(0, value);
+        out.write(buffer.array(), 0, Long.BYTES);
     }
 
-    public void writeFloat(float value) throws IOException {
-        VH_FLOAT.set(buffer, 0, value);
-        out.write(buffer, 0, Float.BYTES);
+    void writeFloat(float value) throws IOException {
+        buffer.putFloat(0, value);
+        out.write(buffer.array(), 0, Float.BYTES);
     }
 
-    public void writeDouble(double value) throws IOException {
-        VH_DOUBLE.set(buffer, 0, value);
-        out.write(buffer, 0, Double.BYTES);
+    void writeDouble(double value) throws IOException {
+        buffer.putDouble(0, value);
+        out.write(buffer.array(), 0, Double.BYTES);
     }
 
-    public void writeBytes(byte[] bytes) throws IOException {
+    void writeBytes(byte[] bytes) throws IOException {
         out.write(bytes);
     }
 
