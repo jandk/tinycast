@@ -6,7 +6,7 @@ import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
 
-public final class CastWriter {
+final class CastWriter {
     private final BinaryWriter writer;
 
     CastWriter(BinaryWriter writer) {

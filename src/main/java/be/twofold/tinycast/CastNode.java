@@ -48,21 +48,21 @@ public abstract class CastNode {
         return result;
     }
 
-    public <T extends CastNode> Optional<T> getChildOfType(Class<T> type) {
+    <T extends CastNode> Optional<T> getChildOfType(Class<T> type) {
         return children.stream()
             .filter(type::isInstance)
             .map(type::cast)
             .findFirst();
     }
 
-    public <T extends CastNode> List<T> getChildrenOfType(Class<T> type) {
+    <T extends CastNode> List<T> getChildrenOfType(Class<T> type) {
         return children.stream()
             .filter(type::isInstance)
             .map(type::cast)
             .collect(Collectors.toUnmodifiableList());
     }
 
-    public <T> Optional<T> getProperty(String name, Function<Object, ? extends T> mapper) {
+    <T> Optional<T> getProperty(String name, Function<Object, ? extends T> mapper) {
         return Optional.ofNullable(properties.get(name))
             .map(p -> mapper.apply(p.getValue()));
     }

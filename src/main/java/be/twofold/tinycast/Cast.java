@@ -47,7 +47,7 @@ public final class Cast extends AbstractList<CastNode> {
         return root;
     }
 
-    public void write(OutputStream out) throws IOException {
+    public void write(OutputStream out) throws CastException {
         CastWriter.write(this, out);
     }
 }
