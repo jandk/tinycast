@@ -1,6 +1,6 @@
 package be.twofold.tinycast;
 
-public final class CastException extends RuntimeException {
+public final class CastException extends Exception {
     public CastException(String message) {
         super(message);
     }

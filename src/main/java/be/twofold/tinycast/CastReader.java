@@ -27,7 +27,7 @@ final class CastReader {
         }
     }
 
-    private Cast read() throws IOException {
+    private Cast read() throws CastException, IOException {
         int magic = reader.readInt();
         if (magic != 0x74736163) {
             throw new CastException("Invalid magic number: " + magic);
@@ -51,7 +51,7 @@ final class CastReader {
         return new Cast(rootNodes);
     }
 
-    private CastNode readNode() throws IOException {
+    private CastNode readNode() throws CastException, IOException {
         CastNodeID identifier = CastNodeID.fromValue(reader.readInt());
         int nodeSize = reader.readInt();
         long nodeHash = reader.readLong();
@@ -72,7 +72,7 @@ final class CastReader {
         return CastNodes.create(identifier, nodeHash, properties, children);
     }
 
-    private CastProperty readProperty(CastNodeID typeId) throws IOException {
+    private CastProperty readProperty(CastNodeID typeId) throws CastException, IOException {
         CastPropertyID identifier = CastPropertyID.fromValue(reader.readShort());
         short nameSize = reader.readShort();
         int arrayLength = reader.readInt();

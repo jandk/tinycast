@@ -13,9 +13,11 @@ public final class CastWriter {
         this.writer = Objects.requireNonNull(writer);
     }
 
-    static void write(Cast cast, OutputStream out) throws IOException {
+    static void write(Cast cast, OutputStream out) throws CastException {
         try (BinaryWriter writer = new BinaryWriter(new BufferedOutputStream(out))) {
             new CastWriter(writer).write(cast);
+        } catch (IOException e) {
+            throw new CastException("Error writing cast file", e);
         }
     }
 

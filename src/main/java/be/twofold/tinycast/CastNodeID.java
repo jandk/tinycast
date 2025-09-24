@@ -31,7 +31,7 @@ public enum CastNodeID {
         return id;
     }
 
-    public static CastNodeID fromValue(int value) {
+    public static CastNodeID fromValue(int value) throws CastException {
         switch (value) {
             case 0x746f6f72:
                 return ROOT;
@@ -70,7 +70,7 @@ public enum CastNodeID {
             case 0x6174656d:
                 return METADATA;
             default:
-                throw new IllegalArgumentException("Unknown CastNodeID: " + value);
+                throw new CastException("Unknown CastNodeID: " + value);
         }
     }
 }

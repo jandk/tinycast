@@ -27,7 +27,7 @@ public final class Cast extends AbstractList<CastNode> {
         return new Cast(initialHash, new ArrayList<>());
     }
 
-    public static Cast read(InputStream in) {
+    public static Cast read(InputStream in) throws CastException {
         return CastReader.read(in);
     }
 

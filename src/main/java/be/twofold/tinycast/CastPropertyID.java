@@ -35,7 +35,7 @@ public enum CastPropertyID {
         return count;
     }
 
-    public static CastPropertyID fromValue(short value) {
+    public static CastPropertyID fromValue(short value) throws CastException {
         switch (value) {
             case 0x0062:
                 return BYTE;
@@ -58,7 +58,7 @@ public enum CastPropertyID {
             case 0x7634:
                 return VECTOR4;
             default:
-                throw new IllegalArgumentException("Unknown CastPropertyID: " + value);
+                throw new CastException("Unknown CastPropertyID: " + value);
         }
     }
 }
