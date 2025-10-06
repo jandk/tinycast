@@ -2,7 +2,8 @@ package be.twofold.tinycast.generator.model;
 
 import be.twofold.tinycast.CastNodeID;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 public final class TypeDef {
     private final CastNodeID type;

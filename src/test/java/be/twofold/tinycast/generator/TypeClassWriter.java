@@ -1,16 +1,40 @@
 package be.twofold.tinycast.generator;
 
-import be.twofold.tinycast.*;
-import be.twofold.tinycast.generator.model.*;
-import com.squareup.javapoet.*;
+import be.twofold.tinycast.CastNode;
+import be.twofold.tinycast.CastNodeID;
+import be.twofold.tinycast.CastProperty;
+import be.twofold.tinycast.CastPropertyID;
+import be.twofold.tinycast.Vec2;
+import be.twofold.tinycast.Vec3;
+import be.twofold.tinycast.Vec4;
+import be.twofold.tinycast.generator.model.PropertyDef;
+import be.twofold.tinycast.generator.model.TypeDef;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
-import javax.lang.model.element.*;
-import java.io.*;
-import java.nio.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.atomic.*;
-import java.util.stream.*;
+import javax.lang.model.element.Modifier;
+import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 final class TypeClassWriter {
     private static final String PACKAGE_NAME = "be.twofold.tinycast";

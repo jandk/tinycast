@@ -2,7 +2,10 @@ package be.twofold.tinycast.generator.model;
 
 import be.twofold.tinycast.CastPropertyID;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public final class PropertyDef {
     private final String name;

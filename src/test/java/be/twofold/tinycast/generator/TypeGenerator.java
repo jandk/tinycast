@@ -1,11 +1,19 @@
 package be.twofold.tinycast.generator;
 
-import be.twofold.tinycast.*;
-import be.twofold.tinycast.generator.model.*;
+import be.twofold.tinycast.CastNodeID;
+import be.twofold.tinycast.CastPropertyID;
+import be.twofold.tinycast.generator.model.PropertyDef;
+import be.twofold.tinycast.generator.model.RawType;
+import be.twofold.tinycast.generator.model.TypeDef;
 
-import java.io.*;
-import java.util.*;
-import java.util.stream.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 final class TypeGenerator {
     private static final RawType RootType = new RawType(

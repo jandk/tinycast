@@ -1,6 +1,6 @@
 package be.twofold.tinycast.generator.model;
 
-import java.util.*;
+import java.util.Objects;
 
 public final class RawType {
     private final String name;

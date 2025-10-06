@@ -2,11 +2,20 @@ package be.twofold.tinycast.generator;
 
 import be.twofold.tinycast.CastNodeID;
 import be.twofold.tinycast.CastPropertyID;
-import be.twofold.tinycast.generator.model.*;
+import be.twofold.tinycast.generator.model.PropertyDef;
+import be.twofold.tinycast.generator.model.RawType;
+import be.twofold.tinycast.generator.model.TypeDef;
 
-import java.util.*;
-import java.util.regex.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 final class TypeParser {
     private static final Pattern PART0_PATTERN = Pattern.compile("(.+?) (?:\\([^(]+)?\\(([\\w%]+)\\)");
