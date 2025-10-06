@@ -1,8 +1,11 @@
 package be.twofold.tinycast;
 
-import java.io.*;
-import java.nio.*;
-import java.util.*;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Objects;
 
 final class BinaryWriter implements Closeable {
     private final ByteBuffer buffer = ByteBuffer

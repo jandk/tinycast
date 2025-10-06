@@ -1,8 +1,16 @@
 package be.twofold.tinycast;
 
-import java.io.*;
-import java.nio.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 final class CastReader {
     private static final Map<CastNodeID, Set<String>> ARRAY_TYPES = Map.of(

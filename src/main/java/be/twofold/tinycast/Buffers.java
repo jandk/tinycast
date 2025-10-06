@@ -1,6 +1,9 @@
 package be.twofold.tinycast;
 
-import java.nio.*;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 final class Buffers {
     private Buffers() {

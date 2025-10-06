@@ -1,8 +1,8 @@
 package be.twofold.tinycast;
 
-import java.nio.*;
-import java.nio.charset.*;
-import java.util.*;
+import java.nio.Buffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public final class CastProperty {
     private final CastPropertyID identifier;
