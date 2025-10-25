@@ -1,0 +1,203 @@
+[
+  {
+    "type": "Root",
+    "children": ["Model", "Animation", "Instance", "Metadata"],
+    "properties": []
+  },
+  {
+    "type": "Model",
+    "children": ["Skeleton", "Mesh", "Hair", "BlendShape", "Material"],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": false, "types": ["s"]},
+      {"key": "p", "name": "Position", "array": false, "required": false, "types": ["v3"]},
+      {"key": "r", "name": "Rotation", "array": false, "required": false, "types": ["v4"]},
+      {"key": "s", "name": "Scale", "array": false, "required": false, "types": ["v3"]}
+    ]
+  },
+  {
+    "type": "Mesh",
+    "children": [],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": false, "types": ["s"]},
+      {"key": "vp", "name": "Vertex Position Buffer", "array": true, "required": true, "types": ["v3"]},
+      {"key": "vn", "name": "Vertex Normal Buffer", "array": true, "required": false, "types": ["v3"]},
+      {"key": "vt", "name": "Vertex Tangent Buffer", "array": true, "required": false, "types": ["v3"]},
+      {"key": "c%d", "name": "Vertex Color Buffer", "array": true, "required": false, "types": ["i", "v4"]},
+      {"key": "u%d", "name": "Vertex UV Buffer", "array": true, "required": false, "types": ["v2"]},
+      {"key": "wb", "name": "Vertex Weight Bone Buffer", "array": true, "required": false, "types": ["b", "h", "i"]},
+      {"key": "wv", "name": "Vertex Weight Value Buffer", "array": true, "required": false, "types": ["f"]},
+      {"key": "f", "name": "Face Buffer", "array": true, "required": true, "types": ["b", "h", "i"]},
+      {"key": "cl", "name": "Color Layer Count", "array": false, "required": false, "types": ["b", "h", "i"]},
+      {"key": "ul", "name": "UV Layer Count", "array": false, "required": false, "types": ["b", "h", "i"]},
+      {"key": "mi", "name": "Maximum Weight Influence", "array": false, "required": false, "types": ["b", "h", "i"]},
+      {"key": "sm", "name": "Skinning Method", "array": false, "required": false, "types": ["s"], "values": ["linear", "quaternion"]},
+      {"key": "m", "name": "Material", "array": false, "required": false, "types": ["l"]}
+    ]
+  },
+  {
+    "type": "Hair",
+    "children": [],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": false, "types": ["s"]},
+      {"key": "se", "name": "Segments Buffer", "array": true, "required": true, "types": ["b", "h", "i"]},
+      {"key": "pt", "name": "Particle Buffer", "array": true, "required": true, "types": ["v3"]},
+      {"key": "m", "name": "Material", "array": false, "required": false, "types": ["l"]}
+    ]
+  },
+  {
+    "type": "BlendShape",
+    "children": [],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": true, "types": ["s"]},
+      {"key": "b", "name": "Base Shape", "array": false, "required": true, "types": ["l"]},
+      {"key": "vi", "name": "Target Shape Vertex Indices", "array": true, "required": true, "types": ["b", "h", "i"]},
+      {"key": "vp", "name": "Target Shape Vertex Positions", "array": true, "required": true, "types": ["v3"]},
+      {"key": "ts", "name": "Target Weight Scale", "array": true, "required": false, "types": ["f"]}
+    ]
+  },
+  {
+    "type": "Skeleton",
+    "children": ["Bone", "IKHandle", "Constraint"],
+    "properties": []
+  },
+  {
+    "type": "Bone",
+    "children": [],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": true, "types": ["s"]},
+      {"key": "p", "name": "Parent Index", "array": false, "required": false, "types": ["i"]},
+      {"key": "ssc", "name": "Segment Scale Compensate", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]},
+      {"key": "lp", "name": "Local Position", "array": false, "required": false, "types": ["v3"]},
+      {"key": "lr", "name": "Local Rotation", "array": false, "required": false, "types": ["v4"]},
+      {"key": "wp", "name": "World Position", "array": false, "required": false, "types": ["v3"]},
+      {"key": "wr", "name": "World Rotation", "array": false, "required": false, "types": ["v4"]},
+      {"key": "s", "name": "Scale", "array": false, "required": false, "types": ["v3"]}
+    ]
+  },
+  {
+    "type": "IKHandle",
+    "children": [],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": false, "types": ["s"]},
+      {"key": "sb", "name": "Start Bone Hash", "array": false, "required": true, "types": ["l"]},
+      {"key": "eb", "name": "End Bone Hash", "array": false, "required": true, "types": ["l"]},
+      {"key": "tb", "name": "Target Bone Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "pv", "name": "Pole Vector Bone Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "pb", "name": "Pole Bone Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "tr", "name": "Use Target Rotation", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]}
+    ]
+  },
+  {
+    "type": "Constraint",
+    "children": [],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": false, "types": ["s"]},
+      {"key": "ct", "name": "Constraint Type", "array": false, "required": true, "types": ["s"], "values": ["sc", "or", "pt"]},
+      {"key": "cb", "name": "Constraint Bone Hash", "array": false, "required": true, "types": ["l"]},
+      {"key": "tb", "name": "Target Bone Hash", "array": false, "required": true, "types": ["l"]},
+      {"key": "mo", "name": "Maintain Offset", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]},
+      {"key": "co", "name": "Custom Offset", "array": false, "required": false, "types": ["v3", "v4"]},
+      {"key": "wt", "name": "Weight", "array": false, "required": false, "types": ["f"]},
+      {"key": "sx", "name": "Skip X", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]},
+      {"key": "sy", "name": "Skip Y", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]},
+      {"key": "sz", "name": "Skip Z", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]}
+    ]
+  },
+  {
+    "type": "Animation",
+    "children": ["Skeleton", "Curve", "CurveModeOverride", "NotificationTrack"],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": false, "types": ["s"]},
+      {"key": "fr", "name": "Framerate", "array": false, "required": true, "types": ["f"]},
+      {"key": "lo", "name": "Looping", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]}
+    ]
+  },
+  {
+    "type": "Curve",
+    "children": [],
+    "properties": [
+      {"key": "nn", "name": "Node Name", "array": false, "required": true, "types": ["s"]},
+      {"key": "kp", "name": "Key Property Name", "array": false, "required": true, "types": ["s"], "values": ["bs", "tx", "ty", "sx", "tz", "sy", "sz", "vb", "rq"]},
+      {"key": "kb", "name": "Key Frame Buffer", "array": true, "required": true, "types": ["b", "h", "i"]},
+      {"key": "kv", "name": "Key Value Buffer", "array": true, "required": true, "types": ["b", "h", "i", "f", "v4"]},
+      {"key": "m", "name": "Mode", "array": false, "required": true, "types": ["s"], "values": ["absolute", "additive", "relative"]},
+      {"key": "ab", "name": "Additive Blend Weight", "array": false, "required": false, "types": ["f"]}
+    ]
+  },
+  {
+    "type": "CurveModeOverride",
+    "children": [],
+    "properties": [
+      {"key": "nn", "name": "Node Name", "array": false, "required": true, "types": ["s"]},
+      {"key": "m", "name": "Mode", "array": false, "required": true, "types": ["s"], "values": ["absolute", "additive", "relative"]},
+      {"key": "ot", "name": "Override Translation Curves", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]},
+      {"key": "or", "name": "Override Rotation Curves", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]},
+      {"key": "os", "name": "Override Scale Curves", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]}
+    ]
+  },
+  {
+    "type": "NotificationTrack",
+    "children": [],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": true, "types": ["s"]},
+      {"key": "kb", "name": "Key Frame Buffer", "array": true, "required": true, "types": ["b", "h", "i"]}
+    ]
+  },
+  {
+    "type": "Material",
+    "children": ["File", "Color"],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": true, "types": ["s"]},
+      {"key": "t", "name": "Type", "array": false, "required": true, "types": ["s"], "values": ["pbr"]},
+      {"key": "albedo", "name": "Albedo Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "diffuse", "name": "Diffuse Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "normal", "name": "Normal Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "specular", "name": "Specular Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "gloss", "name": "Gloss Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "roughness", "name": "Roughness Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "emissive", "name": "Emissive Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "emask", "name": "Emissive Mask Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "ao", "name": "Ambient Occlusion Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "cavity", "name": "Cavity Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "aniso", "name": "Anisotropy Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "extra%d", "name": "Extra", "array": false, "required": false, "types": ["l"]}
+    ]
+  },
+  {
+    "type": "File",
+    "children": [],
+    "properties": [
+      {"key": "p", "name": "Path", "array": false, "required": true, "types": ["s"]}
+    ]
+  },
+  {
+    "type": "Color",
+    "children": [],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": false, "types": ["s"]},
+      {"key": "cs", "name": "Color Space", "array": false, "required": false, "types": ["s"], "values": ["linear", "srgb"]},
+      {"key": "rgba", "name": "Rgba Color", "array": false, "required": true, "types": ["v4"]}
+    ]
+  },
+  {
+    "type": "Instance",
+    "children": ["File"],
+    "properties": [
+      {"key": "n", "name": "Name", "array": false, "required": false, "types": ["s"]},
+      {"key": "rf", "name": "Reference File", "array": false, "required": true, "types": ["l"]},
+      {"key": "p", "name": "Position", "array": false, "required": true, "types": ["v3"]},
+      {"key": "r", "name": "Rotation", "array": false, "required": true, "types": ["v4"]},
+      {"key": "s", "name": "Scale", "array": false, "required": true, "types": ["v3"]}
+    ]
+  },
+  {
+    "type": "Metadata",
+    "children": [],
+    "properties": [
+      {"key": "a", "name": "Author", "array": false, "required": false, "types": ["s"]},
+      {"key": "s", "name": "Software", "array": false, "required": false, "types": ["s"]},
+      {"key": "up", "name": "Up Axis", "array": false, "required": false, "types": ["s"], "values": ["x", "y", "z"]},
+      {"key": "sr", "name": "Scene Root", "array": false, "required": false, "types": ["s"]}
+    ]
+  }
+]
