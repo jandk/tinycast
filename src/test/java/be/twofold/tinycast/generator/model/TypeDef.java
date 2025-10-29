@@ -28,6 +28,8 @@ public final class TypeDef {
         return properties;
     }
 
+
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("TypeDef(")

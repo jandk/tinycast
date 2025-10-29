@@ -3,14 +3,14 @@ package be.twofold.tinycast;
 public enum CastPropertyID {
     BYTE(0x0062, 1, 1),
     SHORT(0x0068, 2, 1),
-    INT(0x0069, 4, 1),
-    LONG(0x006c, 8, 1),
+    INTEGER_32(0x0069, 4, 1),
+    INTEGER_64(0x006c, 8, 1),
     FLOAT(0x0066, 4, 1),
     DOUBLE(0x0064, 8, 1),
     STRING(0x0073, 0, 1),
-    VECTOR2(0x7632, 8, 2),
-    VECTOR3(0x7633, 12, 3),
-    VECTOR4(0x7634, 16, 4),
+    VECTOR_2(0x7632, 8, 2),
+    VECTOR_3(0x7633, 12, 3),
+    VECTOR_4(0x7634, 16, 4),
     ;
 
     private final short id;
@@ -42,9 +42,9 @@ public enum CastPropertyID {
             case 0x0068:
                 return SHORT;
             case 0x0069:
-                return INT;
+                return INTEGER_32;
             case 0x006c:
-                return LONG;
+                return INTEGER_64;
             case 0x0066:
                 return FLOAT;
             case 0x0064:
@@ -52,11 +52,11 @@ public enum CastPropertyID {
             case 0x0073:
                 return STRING;
             case 0x7632:
-                return VECTOR2;
+                return VECTOR_2;
             case 0x7633:
-                return VECTOR3;
+                return VECTOR_3;
             case 0x7634:
-                return VECTOR4;
+                return VECTOR_4;
             default:
                 throw new CastException("Unknown CastPropertyID: " + value);
         }

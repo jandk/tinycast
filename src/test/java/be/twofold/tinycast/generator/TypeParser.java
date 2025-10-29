@@ -3,121 +3,130 @@ package be.twofold.tinycast.generator;
 import be.twofold.tinycast.CastNodeID;
 import be.twofold.tinycast.CastPropertyID;
 import be.twofold.tinycast.generator.model.PropertyDef;
-import be.twofold.tinycast.generator.model.RawType;
 import be.twofold.tinycast.generator.model.TypeDef;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-final class TypeParser {
-    private static final Pattern PART0_PATTERN = Pattern.compile("(.+?) (?:\\([^(]+)?\\(([\\w%]+)\\)");
-    private static final Pattern PART1_PATTERN = Pattern.compile("[^(]+\\((\\w+)\\)(?:\\s+\\[([^]]+)])?");
+public final class TypeParser {
+    private final Map<List<String>, String> enums = new HashMap<>();
 
-    static TypeDef parse(RawType rawType) {
-        List<CastNodeID> children = !rawType.children().isEmpty()
-            ? Arrays.stream(rawType.children().split(","))
-            .map(s -> parseType(s.strip()))
-            .collect(Collectors.toList())
-            : List.<CastNodeID>of();
+    public Map<List<String>, String> getEnums() {
+        return Collections.unmodifiableMap(enums);
+    }
 
-        List<PropertyDef> properties = rawType.properties().lines()
-            .map(TypeParser::parseProperty)
+    public List<TypeDef> parse(InputStream in) throws IOException {
+        try (Reader reader = new InputStreamReader(in)) {
+            JsonArray root = JsonParser
+                .parseReader(reader)
+                .getAsJsonArray();
+
+            return stream(root)
+                .map(e -> parseType(e.getAsJsonObject()))
+                .collect(Collectors.toList());
+        }
+    }
+
+    private TypeDef parseType(JsonObject object) {
+        CastNodeID type = parseNodeID(object.getAsJsonPrimitive("type").getAsString());
+
+        List<CastNodeID> children = stream(object, "children")
+            .map(element -> parseNodeID(element.getAsString()))
             .collect(Collectors.toList());
 
-        return new TypeDef(
-            parseType(rawType.name()),
-            children,
-            properties
-        );
-    }
-
-    private static CastNodeID parseType(String s) {
-        String name = Arrays.stream(s.split("\\s+"))
-            .map(String::toUpperCase)
-            .collect(Collectors.joining("_"));
-        return CastNodeID.valueOf(name);
-    }
-
-    private static PropertyDef parseProperty(String s) {
-        List<String> parts = Arrays.stream(s.split("\t"))
-            .map(String::strip)
+        List<PropertyDef> properties = stream(object, "properties")
+            .map(element -> parseProperty(element.getAsJsonObject()))
             .collect(Collectors.toList());
 
-
-        NameAndKey part0 = parsePropertyName(parts.get(0));
-        TypesAndValues part1 = parseTypesAndValues(parts.get(1));
-        boolean part2 = parsePropertyBoolean(parts.get(2));
-        boolean part3 = parsePropertyBoolean(parts.get(3));
-
-        return new PropertyDef(
-            part0.name(),
-            part0.key(),
-            part1.types(),
-            part1.values(),
-            part2,
-            part3
-        );
+        return new TypeDef(type, children, properties);
     }
 
-    private static NameAndKey parsePropertyName(String s) {
-        Matcher matcher = PART0_PATTERN.matcher(s);
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException();
+    private PropertyDef parseProperty(JsonObject object) {
+        String key = object.getAsJsonPrimitive("key").getAsString();
+        String name = object.getAsJsonPrimitive("name").getAsString();
+        boolean array = object.getAsJsonPrimitive("array").getAsBoolean();
+        boolean required = object.getAsJsonPrimitive("required").getAsBoolean();
+        Set<CastPropertyID> types = stream(object, "types")
+            .map(e -> parsePropertyID(e.getAsString()))
+            .collect(Collectors.toSet());
+        List<String> values = stream(object, "values")
+            .map(JsonElement::getAsString)
+            .collect(Collectors.toList());
+
+        if (!values.isEmpty() && !values.equals(List.of("True", "False"))) {
+            enums.put(values, name);
         }
-        return new NameAndKey(matcher.group(1), matcher.group(2));
+
+        return new PropertyDef(key, name, array, required, types, values);
     }
 
-    private static TypesAndValues parseTypesAndValues(String s) {
-        Matcher matcher = PART1_PATTERN.matcher(s);
-
-        EnumSet<CastPropertyID> allTypes = EnumSet.noneOf(CastPropertyID.class);
-        ArrayList<String> allValues = new ArrayList<>();
-        while (matcher.find()) {
-            Collection<String> values = matcher.group(2) != null
-                ? Arrays.stream(matcher.group(2).split(",")).map(String::strip).collect(Collectors.toSet())
-                : List.of();
-            if (!values.isEmpty() && !allValues.isEmpty()) {
-                throw new IllegalArgumentException();
-            }
-
-            allTypes.add(stringToType(matcher.group(1)));
-            allValues.addAll(values);
-        }
-        return new TypesAndValues(allTypes, allValues);
-    }
-
-    private static boolean parsePropertyBoolean(String s) {
-        if (s.indexOf(' ') >= 0) {
-            return false;
-        }
-        switch (s) {
-            case "True":
-                return true;
-            case "False":
-                return false;
+    private CastNodeID parseNodeID(String id) {
+        switch (id) {
+            case "Root":
+                return CastNodeID.ROOT;
+            case "Model":
+                return CastNodeID.MODEL;
+            case "Mesh":
+                return CastNodeID.MESH;
+            case "Hair":
+                return CastNodeID.HAIR;
+            case "BlendShape":
+                return CastNodeID.BLEND_SHAPE;
+            case "Skeleton":
+                return CastNodeID.SKELETON;
+            case "Bone":
+                return CastNodeID.BONE;
+            case "IKHandle":
+                return CastNodeID.IK_HANDLE;
+            case "Constraint":
+                return CastNodeID.CONSTRAINT;
+            case "Animation":
+                return CastNodeID.ANIMATION;
+            case "Curve":
+                return CastNodeID.CURVE;
+            case "CurveModeOverride":
+                return CastNodeID.CURVE_MODE_OVERRIDE;
+            case "NotificationTrack":
+                return CastNodeID.NOTIFICATION_TRACK;
+            case "Material":
+                return CastNodeID.MATERIAL;
+            case "File":
+                return CastNodeID.FILE;
+            case "Color":
+                return CastNodeID.COLOR;
+            case "Instance":
+                return CastNodeID.INSTANCE;
+            case "Metadata":
+                return CastNodeID.METADATA;
             default:
                 throw new UnsupportedOperationException();
         }
     }
 
-    private static CastPropertyID stringToType(String s) {
-        switch (s) {
+    private CastPropertyID parsePropertyID(String id) {
+        switch (id) {
             case "b":
                 return CastPropertyID.BYTE;
             case "h":
                 return CastPropertyID.SHORT;
             case "i":
-                return CastPropertyID.INT;
+                return CastPropertyID.INTEGER_32;
             case "l":
-                return CastPropertyID.LONG;
+                return CastPropertyID.INTEGER_64;
             case "f":
                 return CastPropertyID.FLOAT;
             case "d":
@@ -125,49 +134,25 @@ final class TypeParser {
             case "s":
                 return CastPropertyID.STRING;
             case "v2":
-                return CastPropertyID.VECTOR2;
+                return CastPropertyID.VECTOR_2;
             case "v3":
-                return CastPropertyID.VECTOR3;
+                return CastPropertyID.VECTOR_3;
             case "v4":
-                return CastPropertyID.VECTOR4;
+                return CastPropertyID.VECTOR_4;
             default:
                 throw new UnsupportedOperationException();
         }
     }
 
-    private static final class NameAndKey {
-        private final String name;
-        private final String key;
-
-        private NameAndKey(String name, String key) {
-            this.name = Objects.requireNonNull(name);
-            this.key = Objects.requireNonNull(key);
+    private Stream<JsonElement> stream(JsonObject object, String property) {
+        JsonElement element = object.get(property);
+        if (element == null || !element.isJsonArray()) {
+            return Stream.empty();
         }
-
-        public String name() {
-            return name;
-        }
-
-        public String key() {
-            return key;
-        }
+        return stream(element.getAsJsonArray());
     }
 
-    private static final class TypesAndValues {
-        private final Set<CastPropertyID> types;
-        private final List<String> values;
-
-        private TypesAndValues(Set<CastPropertyID> types, List<String> values) {
-            this.types = EnumSet.copyOf(types);
-            this.values = List.copyOf(values);
-        }
-
-        public Set<CastPropertyID> types() {
-            return types;
-        }
-
-        public List<String> values() {
-            return values;
-        }
+    private Stream<JsonElement> stream(JsonArray array) {
+        return IntStream.range(0, array.size()).mapToObj(array::get);
     }
 }

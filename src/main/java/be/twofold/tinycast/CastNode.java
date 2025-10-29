@@ -91,7 +91,7 @@ public abstract class CastNode {
         } else if (l <= 0xFFFF) {
             createProperty(CastPropertyID.SHORT, name, (short) l);
         } else {
-            createProperty(CastPropertyID.INT, name, (int) l);
+            createProperty(CastPropertyID.INTEGER_32, name, (int) l);
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class CastNode {
         } else if (buffer instanceof ShortBuffer) {
             createProperty(CastPropertyID.SHORT, name, buffer);
         } else if (buffer instanceof IntBuffer) {
-            createProperty(CastPropertyID.INT, name, buffer);
+            createProperty(CastPropertyID.INTEGER_32, name, buffer);
         } else {
             throw new IllegalArgumentException("Only integral buffers supported");
         }

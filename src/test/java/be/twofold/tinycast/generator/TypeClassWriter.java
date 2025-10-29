@@ -10,6 +10,7 @@ import be.twofold.tinycast.Vec4;
 import be.twofold.tinycast.generator.model.PropertyDef;
 import be.twofold.tinycast.generator.model.TypeDef;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -27,12 +28,14 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,11 @@ final class TypeClassWriter {
     private static final String PACKAGE_NAME = "be.twofold.tinycast";
     private static final ClassName OUTER_CLASS = ClassName.get(PACKAGE_NAME, "CastNodes");
     private static final ClassName SUPER_CLASS = ClassName.get(CastNode.class);
+    private static final EnumSet<CastPropertyID> INTEGER_TYPES = EnumSet.of(
+        CastPropertyID.BYTE,
+        CastPropertyID.SHORT,
+        CastPropertyID.INTEGER_32
+    );
 
     private final Map<List<String>, ClassName> enumLookup = new HashMap<>();
 
@@ -99,7 +107,7 @@ final class TypeClassWriter {
             .superclass(SUPER_CLASS);
 
         List<PropertyDef> indexedProperties = type.properties().stream()
-            .filter(prop -> prop.key().contains("%d"))
+            .filter(prop -> prop.getKey().contains("%d"))
             .collect(Collectors.toList());
 
         for (PropertyDef property : indexedProperties) {
@@ -123,87 +131,35 @@ final class TypeClassWriter {
             .build());
 
         for (CastNodeID child : type.children()) {
-            builder.addMethods(generateNodeMethods(child));
+            builder.addMethods(generateNodeMethod(child));
         }
 
         for (PropertyDef property : type.properties()) {
-            String name = wordsToCamelCase(property.name(), true);
-            TypeName typeName = propertyType(property);
-
-            builder.addMethod(generateGetProperty(property, name, typeName));
-            builder.addMethod(generateSetProperty(property, name, typeName, className));
+            List<Set<CastPropertyID>> types = splitTypes(property.getTypes());
+            for (Set<CastPropertyID> subTypes : types) {
+                String suffix = types.size() == 1 ? "" : suffix(subTypes);
+                builder.addMethod(generatePropertyGetter(property, subTypes, suffix));
+                builder.addMethod(generatePropertySetter(property, subTypes, suffix, className));
+            }
         }
 
         return builder.build();
     }
 
-    private MethodSpec generateGetProperty(PropertyDef property, String name, TypeName typeName) {
-        TypeName returnType = makeOptional(property, typeName);
-        String required = property.required() ? ".orElseThrow()" : "";
-        String getKey = property.isIndexed()
-            ? "String.format(" + property.key() + ", index)"
-            : property.key();
-
-        MethodSpec.Builder builder = MethodSpec.methodBuilder("get" + name)
-            .addModifiers(Modifier.PUBLIC)
-            .returns(returnType);
-        if (property.isIndexed()) {
-            builder.addParameter(int.class, "index");
+    private List<Set<CastPropertyID>> splitTypes(Set<CastPropertyID> types) {
+        Set<CastPropertyID> copy = EnumSet.copyOf(types);
+        List<Set<CastPropertyID>> result = new ArrayList<>();
+        if (copy.containsAll(INTEGER_TYPES)) {
+            result.add(INTEGER_TYPES);
+            copy.removeAll(INTEGER_TYPES);
         }
-
-        if (property.isEnum()) {
-            builder.addStatement("return getProperty($S, $T::from)" + required, getKey, typeName);
-        } else if (property.isBoolean()) {
-            builder.addStatement("return getProperty($S, this::parseBoolean)" + required, getKey);
-        } else {
-            builder.addStatement("return getProperty($S, $T.class::cast)" + required, getKey, typeName);
+        for (CastPropertyID castPropertyID : copy) {
+            result.add(EnumSet.of(castPropertyID));
         }
-        return builder.build();
+        return result;
     }
 
-    private MethodSpec generateSetProperty(PropertyDef property, String name, TypeName typeName, ClassName className) {
-        String setterName = Character.toLowerCase(name.charAt(0)) + name.substring(1);
-
-        MethodSpec.Builder builder = MethodSpec.methodBuilder((property.isIndexed() ? "add" : "set") + name)
-            .addModifiers(Modifier.PUBLIC)
-            .returns(className)
-            .addParameter(typeName, setterName);
-
-        String key = '"' + (property.isIndexed() ? property.key().replace("%d", "") : property.key()) + '"';
-        String setKey = property.isIndexed() ? key + " + " + indexName(property) + "++" : key;
-        if (property.isSingular()) {
-            String setMapper = getSetMapper(property);
-            builder.addStatement("createProperty($T.$L, $L, " + setMapper + ")", CastPropertyID.class, property.types().iterator().next(), setKey, setterName);
-        } else if (property.types().equals(EnumSet.of(CastPropertyID.BYTE, CastPropertyID.SHORT, CastPropertyID.INT))) {
-            if (property.isArray()) {
-                builder.addStatement("createIntBufferProperty($L, $L)", setKey, setterName);
-            } else {
-                builder.addStatement("createIntProperty($L, $L)", setKey, setterName);
-            }
-        } else {
-            boolean first = true;
-            for (CastPropertyID propertyID : property.types()) {
-                Class<?> instanceType = property.isArray() ? arrayType(propertyID) : singularType(propertyID);
-                if (first) {
-                    builder.beginControlFlow("if ($L instanceof $T)", setterName, instanceType);
-                    first = false;
-                } else {
-                    builder.nextControlFlow("else if ($L instanceof $T)", setterName, instanceType);
-                }
-                builder.addStatement("createProperty($T.$L, $L, $L)", CastPropertyID.class, propertyID, setKey, setterName);
-            }
-            builder
-                .nextControlFlow("else")
-                .addStatement("throw new $T(\"Invalid type for property $L\")", IllegalArgumentException.class, setterName)
-                .endControlFlow();
-        }
-
-        return builder
-            .addStatement("return this")
-            .build();
-    }
-
-    private List<MethodSpec> generateNodeMethods(CastNodeID child) {
+    private List<MethodSpec> generateNodeMethod(CastNodeID child) {
         String childClassName = className(child);
         TypeName childType = OUTER_CLASS.nestedClass(childClassName);
         TypeName returnType = child == CastNodeID.SKELETON
@@ -226,43 +182,131 @@ final class TypeClassWriter {
         return List.of(getter, creator);
     }
 
-    private String getSetMapper(PropertyDef property) {
-        if (property.isEnum()) {
-            return "$N.toString().toLowerCase()";
+    private MethodSpec generatePropertyGetter(PropertyDef property, Set<CastPropertyID> types, String suffix) {
+        String propertyName = property.upperCamelCase();
+        TypeName returnType = returnType(property, types);
+
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("get" + propertyName + suffix)
+            .addModifiers(Modifier.PUBLIC)
+            .returns(returnType);
+        if (property.isIndexed()) {
+            builder.addParameter(int.class, "index");
         }
-        if (property.isBoolean()) {
-            return "$N ? 1 : 0";
-        }
-        return "$N";
+        return builder
+            .addStatement(generateGetterCode(property, types))
+            .build();
     }
 
-    private TypeName propertyType(PropertyDef property) {
-        if (property.isSingular()) {
-            CastPropertyID propertyID = property.types().iterator().next();
+    private CodeBlock generateGetterCode(PropertyDef property, Set<CastPropertyID> types) {
+        String required = property.isRequired() ? ".orElseThrow()" : "";
+        String name = property.isIndexed()
+            ? "String.format(" + property.getKey() + ", index)"
+            : property.getKey();
+        TypeName type = propertyType(property, types);
+
+        switch (property.getType()) {
+            case SIMPLE:
+                return CodeBlock.of("return getProperty($S, $T.class::cast)" + required, name, type);
+            case ENUM:
+                return CodeBlock.of("return getProperty($S, $T::from)" + required, name, type);
+            case BOOL:
+                return CodeBlock.of("return getProperty($S, this::parseBoolean)" + required, name);
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    private MethodSpec generatePropertySetter(PropertyDef property, Set<CastPropertyID> types, String suffix, ClassName className) {
+        return MethodSpec.methodBuilder((property.isIndexed() ? "add" : "set") + property.upperCamelCase() + suffix)
+            .addModifiers(Modifier.PUBLIC)
+            .returns(className)
+            .addParameter(propertyType(property, types), property.variableName())
+            .addStatement(generateSetterCode(property, types))
+            .addStatement("return this")
+            .build();
+    }
+
+    private CodeBlock generateSetterCode(PropertyDef property, Set<CastPropertyID> types) {
+        String setKey = property.isIndexed()
+            ? '"' + property.getKey().replace("%d", "") + '"' + " + " + indexName(property) + "++"
+            : '"' + property.getKey() + '"';
+
+        if (types.equals(INTEGER_TYPES)) {
             if (property.isArray()) {
-                return ClassName.get(arrayType(propertyID));
-            } else if (property.isBoolean()) {
-                return ClassName.get(Boolean.class);
-            } else if (property.isEnum()) {
-                return enumLookup.get(property.values());
+                return CodeBlock.of("createIntBufferProperty($L, $L)", setKey, property.variableName());
             } else {
-                return ClassName.get(singularType(propertyID));
+                return CodeBlock.of("createIntProperty($L, $L)", setKey, property.variableName());
             }
-        }
-
-        // Multiple types and it's an array, that's just some form of buffer
-        if (property.isArray()) {
-            return ClassName.get(Buffer.class);
-        }
-
-        // Stupid special cases
-        EnumSet<CastPropertyID> types = EnumSet.copyOf(property.types());
-        if (types.equals(EnumSet.of(CastPropertyID.VECTOR3, CastPropertyID.VECTOR4))) {
-            return ClassName.get(Object.class);
-        } else if (types.equals(EnumSet.of(CastPropertyID.BYTE, CastPropertyID.SHORT, CastPropertyID.INT))) {
-            return ClassName.get(Integer.class);
         } else {
-            throw new IllegalArgumentException(types.toString());
+            String setMapper = getSetMapper(property);
+            return CodeBlock.of("createProperty($T.$L, $L, " + setMapper + ")", CastPropertyID.class, types.iterator().next(), setKey, property.variableName());
+        }
+    }
+
+    private String getSetMapper(PropertyDef property) {
+        switch (property.getType()) {
+            case SIMPLE:
+                return "$N";
+            case ENUM:
+                return "$N.toString().toLowerCase()";
+            case BOOL:
+                return "$N ? 1 : 0";
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    private String suffix(Set<CastPropertyID> set) {
+        if (set.equals(INTEGER_TYPES)) {
+            return "Int";
+        }
+        switch (set.iterator().next()) {
+            case INTEGER_32:
+                return "I32";
+            case FLOAT:
+                return "F32";
+            case VECTOR_3:
+                return "V3";
+            case VECTOR_4:
+                return "V4";
+            default:
+                throw new UnsupportedOperationException(set.iterator().next().toString());
+        }
+    }
+
+    // region Type Resolution
+
+    private TypeName propertyType(PropertyDef property, Set<CastPropertyID> subTypes) {
+        switch (property.getType()) {
+            case SIMPLE:
+                if (subTypes.size() == 1) {
+                    CastPropertyID propertyID = subTypes.iterator().next();
+                    return ClassName.get(property.isArray() ? arrayType(propertyID) : singularType(propertyID));
+                }
+
+                // Multiple types and it's an array, that's just some form of buffer
+                if (property.isArray()) {
+                    return ClassName.get(Buffer.class);
+                }
+
+                // Stupid special cases
+                EnumSet<CastPropertyID> types = EnumSet.copyOf(property.getTypes());
+                if (types.equals(EnumSet.of(CastPropertyID.VECTOR_3, CastPropertyID.VECTOR_4))) {
+                    return ClassName.get(Object.class);
+                } else if (types.equals(INTEGER_TYPES)) {
+                    return ClassName.get(Integer.class);
+                } else {
+                    throw new IllegalArgumentException(types.toString());
+                }
+
+            case ENUM:
+                return enumLookup.get(property.getValues());
+
+            case BOOL:
+                return ClassName.get(Boolean.class);
+
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -272,9 +316,9 @@ final class TypeClassWriter {
                 return Byte.class;
             case SHORT:
                 return Short.class;
-            case INT:
+            case INTEGER_32:
                 return Integer.class;
-            case LONG:
+            case INTEGER_64:
                 return Long.class;
             case FLOAT:
                 return Float.class;
@@ -282,11 +326,11 @@ final class TypeClassWriter {
                 return Double.class;
             case STRING:
                 return String.class;
-            case VECTOR2:
+            case VECTOR_2:
                 return Vec2.class;
-            case VECTOR3:
+            case VECTOR_3:
                 return Vec3.class;
-            case VECTOR4:
+            case VECTOR_4:
                 return Vec4.class;
             default:
                 throw new UnsupportedOperationException();
@@ -299,14 +343,14 @@ final class TypeClassWriter {
                 return ByteBuffer.class;
             case SHORT:
                 return ShortBuffer.class;
-            case INT:
+            case INTEGER_32:
                 return IntBuffer.class;
-            case LONG:
+            case INTEGER_64:
                 return LongBuffer.class;
             case FLOAT:
-            case VECTOR2:
-            case VECTOR3:
-            case VECTOR4:
+            case VECTOR_2:
+            case VECTOR_3:
+            case VECTOR_4:
                 return FloatBuffer.class;
             case DOUBLE:
                 return DoubleBuffer.class;
@@ -317,26 +361,29 @@ final class TypeClassWriter {
         }
     }
 
-    private TypeName makeOptional(PropertyDef property, TypeName type) {
-        if (!property.required()) {
+    private TypeName returnType(PropertyDef property, Set<CastPropertyID> types) {
+        TypeName type = propertyType(property, types);
+        if (!property.isRequired()) {
             return ParameterizedTypeName.get(ClassName.get(Optional.class), type);
-        }
-        if (type.isBoxedPrimitive()) {
+        } else if (type.isBoxedPrimitive()) {
             return type.unbox();
+        } else {
+            return type;
         }
-        return type;
     }
+
+    // endregion
 
     // region Enums
 
     private void buildEnumLookup(List<TypeDef> types) {
         for (TypeDef type : types) {
             for (PropertyDef property : type.properties()) {
-                List<String> values = property.values();
+                List<String> values = property.getValues();
                 if (values.isEmpty() || values.equals(List.of("True", "False"))) {
                     continue;
                 }
-                String sanitized = wordsToCamelCase(property.name(), true);
+                String sanitized = property.upperCamelCase();
                 ClassName name = OUTER_CLASS.nestedClass(sanitized);
                 if (enumLookup.containsKey(values) && !enumLookup.get(values).equals(name)) {
                     throw new IllegalArgumentException("not unique");
@@ -346,7 +393,7 @@ final class TypeClassWriter {
         }
     }
 
-    private TypeSpec generateEnum(ClassName name, List<String> values) {
+    private static TypeSpec generateEnum(ClassName name, List<String> values) {
         MethodSpec fromMethod = MethodSpec.methodBuilder("from")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .returns(name)
@@ -375,27 +422,13 @@ final class TypeClassWriter {
         return name + 's';
     }
 
-    private String className(CastNodeID child) {
-        String result = Arrays.stream(child.name().split("_"))
-            .map(s -> changeFirst(s.toLowerCase(), true))
+    private String className(CastNodeID id) {
+        return Arrays.stream(id.name().split("_"))
+            .map(s -> Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase())
             .collect(Collectors.joining());
-
-        return changeFirst(result, true);
     }
 
     private String indexName(PropertyDef property) {
-        return wordsToCamelCase(property.name(), false) + "Index";
-    }
-
-    private String wordsToCamelCase(String s, boolean upper) {
-        String result = String.join("", s.split("\\s+"));
-        return changeFirst(result, upper);
-    }
-
-    private String changeFirst(String s, boolean upper) {
-        char first = upper
-            ? Character.toUpperCase(s.charAt(0))
-            : Character.toLowerCase(s.charAt(0));
-        return first + s.substring(1);
+        return property.variableName() + "Index";
     }
 }

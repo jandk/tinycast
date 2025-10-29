@@ -8,20 +8,20 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class PropertyDef {
-    private final String name;
     private final String key;
+    private final String name;
+    private final boolean array;
+    private final boolean required;
     private final Set<CastPropertyID> types;
     private final List<String> values;
-    private final boolean isArray;
-    private final boolean required;
 
-    public PropertyDef(String name, String key, Set<CastPropertyID> types, List<String> values, boolean isArray, boolean required) {
-        this.name = Objects.requireNonNull(name);
+    public PropertyDef(String key, String name, boolean array, boolean required, Set<CastPropertyID> types, List<String> values) {
         this.key = Objects.requireNonNull(key);
+        this.name = Objects.requireNonNull(name);
+        this.array = array;
+        this.required = required;
         this.types = EnumSet.copyOf(types);
         this.values = List.copyOf(values);
-        this.isArray = isArray;
-        this.required = required;
 
         if (types.isEmpty()) {
             throw new IllegalArgumentException("types is empty");
@@ -29,46 +29,70 @@ public final class PropertyDef {
     }
 
 
-    public String name() {
-        return name;
-    }
-
-    public String key() {
+    public String getKey() {
         return key;
     }
 
-    public Set<CastPropertyID> types() {
-        return types;
-    }
-
-    public List<String> values() {
-        return values;
+    public String getName() {
+        return name;
     }
 
     public boolean isArray() {
-        return isArray;
+        return array;
     }
 
-    public boolean required() {
+    public boolean isRequired() {
         return required;
     }
 
+    public Set<CastPropertyID> getTypes() {
+        return types;
+    }
+
+    public List<String> getValues() {
+        return values;
+    }
+
+    public PropertyType getType() {
+        if (values.isEmpty()) {
+            return PropertyType.SIMPLE;
+        } else if (values.equals(List.of("True", "False"))) {
+            return PropertyType.BOOL;
+        } else {
+            return PropertyType.ENUM;
+        }
+    }
 
     public boolean isIndexed() {
         return key.endsWith("%d");
     }
 
-    public boolean isSingular() {
-        return types.size() == 1;
+    @Override
+    public String toString() {
+        return "PropertyDef(" +
+            "key=" + key + ", " +
+            "name=" + name + ", " +
+            "array=" + array + ", " +
+            "required=" + required + ", " +
+            "types=" + types + ", " +
+            "values=" + values +
+            ")";
     }
 
-    public boolean isBoolean() {
-        return !values.isEmpty() && values.equals(List.of("True", "False"));
+    public String variableName() {
+        return wordsToCamelCase(getName(), false);
     }
 
-    public boolean isEnum() {
-        return !values.isEmpty() && !values.equals(List.of("True", "False"));
+    public String upperCamelCase() {
+        return wordsToCamelCase(getName(), true);
     }
 
+    private String wordsToCamelCase(String s, boolean upper) {
+        String result = String.join("", s.split("\\s+"));
+        char first = upper
+            ? Character.toUpperCase(result.charAt(0))
+            : Character.toLowerCase(result.charAt(0));
+        return first + result.substring(1);
+    }
 
 }

@@ -80,10 +80,10 @@ final class CastWriter {
             case SHORT:
                 writer.writeShort((short) value);
                 break;
-            case INT:
+            case INTEGER_32:
                 writer.writeInt((int) value);
                 break;
-            case LONG:
+            case INTEGER_64:
                 writer.writeLong((long) value);
                 break;
             case FLOAT:
@@ -96,20 +96,20 @@ final class CastWriter {
                 writer.writeBytes(value.toString().getBytes(StandardCharsets.UTF_8));
                 writer.writeByte((byte) 0);
                 break;
-            case VECTOR2: {
+            case VECTOR_2: {
                 Vec2 vec = (Vec2) value;
                 writer.writeFloat(vec.getX());
                 writer.writeFloat(vec.getY());
                 break;
             }
-            case VECTOR3: {
+            case VECTOR_3: {
                 Vec3 vec = (Vec3) value;
                 writer.writeFloat(vec.getX());
                 writer.writeFloat(vec.getY());
                 writer.writeFloat(vec.getZ());
                 break;
             }
-            case VECTOR4: {
+            case VECTOR_4: {
                 Vec4 vec = (Vec4) value;
                 writer.writeFloat(vec.getX());
                 writer.writeFloat(vec.getY());

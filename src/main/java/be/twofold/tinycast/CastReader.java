@@ -99,9 +99,9 @@ final class CastReader {
                 return reader.readByte();
             case SHORT:
                 return reader.readShort();
-            case INT:
+            case INTEGER_32:
                 return reader.readInt();
-            case LONG:
+            case INTEGER_64:
                 return reader.readLong();
             case FLOAT:
                 return reader.readFloat();
@@ -109,18 +109,18 @@ final class CastReader {
                 return reader.readDouble();
             case STRING:
                 return reader.readCString();
-            case VECTOR2: {
+            case VECTOR_2: {
                 float x = reader.readFloat();
                 float y = reader.readFloat();
                 return new Vec2(x, y);
             }
-            case VECTOR3: {
+            case VECTOR_3: {
                 float x = reader.readFloat();
                 float y = reader.readFloat();
                 float z = reader.readFloat();
                 return new Vec3(x, y, z);
             }
-            case VECTOR4: {
+            case VECTOR_4: {
                 float x = reader.readFloat();
                 float y = reader.readFloat();
                 float z = reader.readFloat();
@@ -139,14 +139,14 @@ final class CastReader {
                 return buffer;
             case SHORT:
                 return buffer.asShortBuffer();
-            case INT:
+            case INTEGER_32:
                 return buffer.asIntBuffer();
-            case LONG:
+            case INTEGER_64:
                 return buffer.asLongBuffer();
             case FLOAT:
-            case VECTOR2:
-            case VECTOR3:
-            case VECTOR4:
+            case VECTOR_2:
+            case VECTOR_3:
+            case VECTOR_4:
                 return buffer.asFloatBuffer();
             case DOUBLE:
                 return buffer.asDoubleBuffer();
