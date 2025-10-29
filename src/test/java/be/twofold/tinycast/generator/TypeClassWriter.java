@@ -169,7 +169,6 @@ final class TypeClassWriter {
         String methodName = single ? "getChildOfType" : "getChildrenOfType";
 
         MethodSpec getter = MethodSpec.methodBuilder("get" + (single ? childClassName : multiple(childClassName)))
-            // pm.addJavadoc("Returns the list of .\n@return The child")
             .addModifiers(Modifier.PUBLIC)
             .returns(returnType)
             .addStatement("return $L($T.class)", methodName, childType)
@@ -396,7 +395,12 @@ final class TypeClassWriter {
     }
 
     private static TypeSpec generateEnum(ClassName name, List<String> values) {
+        String nameWithSpaces = name.toString().replaceAll("([a-z])([A-Z])", "$1 $2");
+
         MethodSpec fromMethod = MethodSpec.methodBuilder("from")
+            .addJavadoc("Converts an Object (usually a String) to the correct value\n" +
+                "\n" +
+                "@param o The Object to convert")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .returns(name)
             .addParameter(Object.class, "o")
@@ -404,10 +408,13 @@ final class TypeClassWriter {
             .build();
 
         TypeSpec.Builder builder = TypeSpec.enumBuilder(name)
+            .addJavadoc("Enumeration with possible values for the " + nameWithSpaces + " property")
             .addModifiers(Modifier.PUBLIC);
 
         for (String value : values) {
-            builder.addEnumConstant(value.toUpperCase());
+            builder.addEnumConstant(value.toUpperCase(), TypeSpec.anonymousClassBuilder("")
+                .addJavadoc("Value representing the string {@code $S}", value)
+                .build());
         }
 
         return builder

@@ -73,89 +73,214 @@ public final class CastNodes {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Constraint Type property
+     */
     public enum ConstraintType {
+        /**
+         * Value representing the string {@code "sc"}
+         */
         SC,
 
+        /**
+         * Value representing the string {@code "or"}
+         */
         OR,
 
+        /**
+         * Value representing the string {@code "pt"}
+         */
         PT;
 
+        /**
+         * Converts an Object (usually a String) to the correct value
+         *
+         * @param o The Object to convert
+         */
         public static ConstraintType from(Object o) {
             return valueOf(o.toString().toUpperCase());
         }
     }
 
+    /**
+     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Color Space property
+     */
     public enum ColorSpace {
+        /**
+         * Value representing the string {@code "linear"}
+         */
         LINEAR,
 
+        /**
+         * Value representing the string {@code "srgb"}
+         */
         SRGB;
 
+        /**
+         * Converts an Object (usually a String) to the correct value
+         *
+         * @param o The Object to convert
+         */
         public static ColorSpace from(Object o) {
             return valueOf(o.toString().toUpperCase());
         }
     }
 
+    /**
+     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Up Axis property
+     */
     public enum UpAxis {
+        /**
+         * Value representing the string {@code "x"}
+         */
         X,
 
+        /**
+         * Value representing the string {@code "y"}
+         */
         Y,
 
+        /**
+         * Value representing the string {@code "z"}
+         */
         Z;
 
+        /**
+         * Converts an Object (usually a String) to the correct value
+         *
+         * @param o The Object to convert
+         */
         public static UpAxis from(Object o) {
             return valueOf(o.toString().toUpperCase());
         }
     }
 
+    /**
+     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Key Property Name property
+     */
     public enum KeyPropertyName {
+        /**
+         * Value representing the string {@code "bs"}
+         */
         BS,
 
+        /**
+         * Value representing the string {@code "tx"}
+         */
         TX,
 
+        /**
+         * Value representing the string {@code "ty"}
+         */
         TY,
 
+        /**
+         * Value representing the string {@code "sx"}
+         */
         SX,
 
+        /**
+         * Value representing the string {@code "tz"}
+         */
         TZ,
 
+        /**
+         * Value representing the string {@code "sy"}
+         */
         SY,
 
+        /**
+         * Value representing the string {@code "sz"}
+         */
         SZ,
 
+        /**
+         * Value representing the string {@code "vb"}
+         */
         VB,
 
+        /**
+         * Value representing the string {@code "rq"}
+         */
         RQ;
 
+        /**
+         * Converts an Object (usually a String) to the correct value
+         *
+         * @param o The Object to convert
+         */
         public static KeyPropertyName from(Object o) {
             return valueOf(o.toString().toUpperCase());
         }
     }
 
+    /**
+     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Mode property
+     */
     public enum Mode {
+        /**
+         * Value representing the string {@code "absolute"}
+         */
         ABSOLUTE,
 
+        /**
+         * Value representing the string {@code "additive"}
+         */
         ADDITIVE,
 
+        /**
+         * Value representing the string {@code "relative"}
+         */
         RELATIVE;
 
+        /**
+         * Converts an Object (usually a String) to the correct value
+         *
+         * @param o The Object to convert
+         */
         public static Mode from(Object o) {
             return valueOf(o.toString().toUpperCase());
         }
     }
 
+    /**
+     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Type property
+     */
     public enum Type {
+        /**
+         * Value representing the string {@code "pbr"}
+         */
         PBR;
 
+        /**
+         * Converts an Object (usually a String) to the correct value
+         *
+         * @param o The Object to convert
+         */
         public static Type from(Object o) {
             return valueOf(o.toString().toUpperCase());
         }
     }
 
+    /**
+     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Skinning Method property
+     */
     public enum SkinningMethod {
+        /**
+         * Value representing the string {@code "linear"}
+         */
         LINEAR,
 
+        /**
+         * Value representing the string {@code "quaternion"}
+         */
         QUATERNION;
 
+        /**
+         * Converts an Object (usually a String) to the correct value
+         *
+         * @param o The Object to convert
+         */
         public static SkinningMethod from(Object o) {
             return valueOf(o.toString().toUpperCase());
         }
