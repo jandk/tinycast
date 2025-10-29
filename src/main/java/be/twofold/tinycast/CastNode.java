@@ -14,6 +14,27 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Base class for all Cast nodes in the Cast file format.
+ * <p>
+ * A Cast node represents a data structure in the Cast format hierarchy. Nodes are identified
+ * by a unique {@link CastNodeID} that determines the type and purpose of the node, and a
+ * unique 64-bit hash value used for linking nodes together (e.g., linking materials to meshes).
+ * <p>
+ * Each node contains:
+ * <ul>
+ *   <li>An identifier specifying the node type (Root, Model, Mesh, Material, etc.)</li>
+ *   <li>A unique hash for cross-referencing</li>
+ *   <li>A collection of properties containing the node's data</li>
+ *   <li>A list of child nodes forming a hierarchy</li>
+ * </ul>
+ * <p>
+ * Nodes follow a stack layout (FILO order) in the Cast file format, where properties
+ * always precede a node's children in the serialized form.
+ *
+ * @see CastNodeID
+ * @see CastProperty
+ */
 public abstract class CastNode {
     private final CastNodeID identifier;
     private final long hash;
@@ -37,10 +58,29 @@ public abstract class CastNode {
         this(identifier, hash, null, properties, children);
     }
 
+    /**
+     * Returns the identifier that specifies the type of this node.
+     * <p>
+     * The identifier is used to determine which class the node uses and how to handle
+     * its data during serialization and deserialization. Common identifiers include
+     * Root, Model, Mesh, Skeleton, Material, and Animation.
+     *
+     * @return the node's type identifier
+     */
     public CastNodeID getIdentifier() {
         return identifier;
     }
 
+    /**
+     * Returns the unique hash value for this node.
+     * <p>
+     * The hash acts as a unique identifier for linking nodes together. For example,
+     * a mesh node can reference a material node by storing the material's hash value
+     * in its properties. This enables relationships between nodes without requiring
+     * direct object references in the file format.
+     *
+     * @return the unique 64-bit hash value
+     */
     public long getHash() {
         return hash;
     }

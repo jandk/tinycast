@@ -160,14 +160,16 @@ final class TypeClassWriter {
     }
 
     private List<MethodSpec> generateNodeMethod(CastNodeID child) {
+        boolean single = child == CastNodeID.SKELETON;
         String childClassName = className(child);
         TypeName childType = OUTER_CLASS.nestedClass(childClassName);
-        TypeName returnType = child == CastNodeID.SKELETON
+        TypeName returnType = single
             ? ParameterizedTypeName.get(ClassName.get(Optional.class), OUTER_CLASS.nestedClass("Skeleton"))
             : ParameterizedTypeName.get(ClassName.get(List.class), childType);
-        String methodName = child == CastNodeID.SKELETON ? "getChildOfType" : "getChildrenOfType";
+        String methodName = single ? "getChildOfType" : "getChildrenOfType";
 
-        MethodSpec getter = MethodSpec.methodBuilder("get" + multiple(childClassName))
+        MethodSpec getter = MethodSpec.methodBuilder("get" + (single ? childClassName : multiple(childClassName)))
+            // pm.addJavadoc("Returns the list of .\n@return The child")
             .addModifiers(Modifier.PUBLIC)
             .returns(returnType)
             .addStatement("return $L($T.class)", methodName, childType)

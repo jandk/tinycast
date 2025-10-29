@@ -1,24 +1,46 @@
 package be.twofold.tinycast;
 
+/**
+ * Immutable 3D vector of single-precision floats.
+ * <p>
+ * Commonly used for positions, normals, and scales in the Cast format. Instances are
+ * value objects: equality and hash code are based on component values.
+ */
 public final class Vec3 {
     private final float x;
     private final float y;
     private final float z;
 
+    /**
+     * Creates a vector with the given components.
+     *
+     * @param x the X component
+     * @param y the Y component
+     * @param z the Z component
+     */
     public Vec3(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
+    /**
+     * Returns the X component.
+     */
     public float getX() {
         return x;
     }
 
+    /**
+     * Returns the Y component.
+     */
     public float getY() {
         return y;
     }
 
+    /**
+     * Returns the Z component.
+     */
     public float getZ() {
         return z;
     }

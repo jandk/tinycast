@@ -214,7 +214,7 @@ public final class CastNodes {
             // TODO: Validation
         }
 
-        public Optional<Skeleton> getSkeletons() {
+        public Optional<Skeleton> getSkeleton() {
             return getChildOfType(Skeleton.class);
         }
 
@@ -856,7 +856,7 @@ public final class CastNodes {
             // TODO: Validation
         }
 
-        public Optional<Skeleton> getSkeletons() {
+        public Optional<Skeleton> getSkeleton() {
             return getChildOfType(Skeleton.class);
         }
 
