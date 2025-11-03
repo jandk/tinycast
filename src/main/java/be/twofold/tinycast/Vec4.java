@@ -29,6 +29,8 @@ public final class Vec4 {
 
     /**
      * Returns the X component.
+     *
+     * @return The X component.
      */
     public float getX() {
         return x;
@@ -36,6 +38,8 @@ public final class Vec4 {
 
     /**
      * Returns the Y component.
+     *
+     * @return The Y component.
      */
     public float getY() {
         return y;
@@ -43,6 +47,8 @@ public final class Vec4 {
 
     /**
      * Returns the Z component.
+     *
+     * @return The Z component.
      */
     public float getZ() {
         return z;
@@ -50,6 +56,8 @@ public final class Vec4 {
 
     /**
      * Returns the W component.
+     *
+     * @return The W component.
      */
     public float getW() {
         return w;

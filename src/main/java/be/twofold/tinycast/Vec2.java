@@ -23,6 +23,8 @@ public final class Vec2 {
 
     /**
      * Returns the X component.
+     *
+     * @return The X component.
      */
     public float getX() {
         return x;
@@ -30,6 +32,8 @@ public final class Vec2 {
 
     /**
      * Returns the Y component.
+     *
+     * @return The Y component.
      */
     public float getY() {
         return y;
