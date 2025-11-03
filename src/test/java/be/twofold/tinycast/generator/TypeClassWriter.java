@@ -53,6 +53,7 @@ final class TypeClassWriter {
 
     void generate(List<TypeDef> types) throws IOException {
         TypeSpec.Builder builder = TypeSpec.classBuilder(OUTER_CLASS)
+            .addJavadoc("Namespace class containing the different Cast node types")
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
             .addMethod(MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PRIVATE)
@@ -103,6 +104,7 @@ final class TypeClassWriter {
     private TypeSpec generateClass(TypeDef type) {
         ClassName className = OUTER_CLASS.nestedClass(className(type.type()));
         TypeSpec.Builder builder = TypeSpec.classBuilder(className)
+            .addJavadoc("Implementation of the \"" + className(type.type()) + "\" node")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
             .superclass(SUPER_CLASS);
 
@@ -169,12 +171,18 @@ final class TypeClassWriter {
         String methodName = single ? "getChildOfType" : "getChildrenOfType";
 
         MethodSpec getter = MethodSpec.methodBuilder("get" + (single ? childClassName : multiple(childClassName)))
+            .addJavadoc("Returns the child" + (single ? "" : "ren") + " of type {@link " + childClassName + "}.\n" +
+                "\n" +
+                "@return The " + (single ? "single" : "list of") + " " + multiple(childClassName) + "")
             .addModifiers(Modifier.PUBLIC)
             .returns(returnType)
             .addStatement("return $L($T.class)", methodName, childType)
             .build();
 
         MethodSpec creator = MethodSpec.methodBuilder("create" + childClassName)
+            .addJavadoc("Create and add a new instance of type {@link " + childClassName + "}.\n" +
+                "\n" +
+                "@return The new instance")
             .addModifiers(Modifier.PUBLIC)
             .returns(childType)
             .addStatement("return createChild(new $T(hasher))", childType)
@@ -188,6 +196,10 @@ final class TypeClassWriter {
         TypeName returnType = returnType(property, types);
 
         MethodSpec.Builder builder = MethodSpec.methodBuilder("get" + propertyName)
+            .addJavadoc("Returns the value of the {@code \"" + property.getKey() + "\"} property (" + property.getName() + ").\n" +
+                "\n" +
+                (property.isIndexed() ? "@param index The index of the value to get\n" : "") +
+                "@return The value of the {@code \"" + property.getKey() + "\"} property")
             .addModifiers(Modifier.PUBLIC)
             .returns(returnType);
         if (property.isIndexed()) {
@@ -222,6 +234,10 @@ final class TypeClassWriter {
 
     private MethodSpec generatePropertySetter(PropertyDef property, Set<CastPropertyID> types, String suffix, ClassName className) {
         return MethodSpec.methodBuilder((property.isIndexed() ? "add" : "set") + property.upperCamelCase() + suffix)
+            .addJavadoc("Sets the value of the {@code \"" + property.getKey() + "\"} property (" + property.getName() + ").\n" +
+                "\n" +
+                "@param " + property.variableName() + " The new value.\n" +
+                "@return The {@code this} instance for chaining")
             .addModifiers(Modifier.PUBLIC)
             .returns(className)
             .addParameter(parameterType(property, types), property.variableName())
@@ -412,7 +428,8 @@ final class TypeClassWriter {
         MethodSpec fromMethod = MethodSpec.methodBuilder("from")
             .addJavadoc("Converts an Object (usually a String) to the correct value\n" +
                 "\n" +
-                "@param o The Object to convert")
+                "@param o The Object to convert\n" +
+                "@return The corresponding enum value")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .returns(name)
             .addParameter(Object.class, "o")
