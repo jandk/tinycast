@@ -136,9 +136,9 @@ final class TypeClassWriter {
 
         for (PropertyDef property : type.properties()) {
             List<Set<CastPropertyID>> types = splitTypes(property.getTypes());
+            builder.addMethod(generatePropertyGetter(property, property.getTypes()));
             for (Set<CastPropertyID> subTypes : types) {
                 String suffix = types.size() == 1 ? "" : suffix(subTypes);
-                builder.addMethod(generatePropertyGetter(property, subTypes, suffix));
                 builder.addMethod(generatePropertySetter(property, subTypes, suffix, className));
             }
         }
@@ -183,11 +183,11 @@ final class TypeClassWriter {
         return List.of(getter, creator);
     }
 
-    private MethodSpec generatePropertyGetter(PropertyDef property, Set<CastPropertyID> types, String suffix) {
+    private MethodSpec generatePropertyGetter(PropertyDef property, Set<CastPropertyID> types) {
         String propertyName = property.upperCamelCase();
         TypeName returnType = returnType(property, types);
 
-        MethodSpec.Builder builder = MethodSpec.methodBuilder("get" + propertyName + suffix)
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("get" + propertyName)
             .addModifiers(Modifier.PUBLIC)
             .returns(returnType);
         if (property.isIndexed()) {
@@ -207,6 +207,9 @@ final class TypeClassWriter {
 
         switch (property.getType()) {
             case SIMPLE:
+                if (!property.isArray() && types.equals(INTEGER_TYPES)) {
+                    return CodeBlock.of("return getIntProperty($S)" + required, name);
+                }
                 return CodeBlock.of("return getProperty($S, $T.class::cast)" + required, name, type);
             case ENUM:
                 return CodeBlock.of("return getProperty($S, $T::from)" + required, name, type);
@@ -395,7 +398,7 @@ final class TypeClassWriter {
     }
 
     private static TypeSpec generateEnum(ClassName name, List<String> values) {
-        String nameWithSpaces = name.toString().replaceAll("([a-z])([A-Z])", "$1 $2");
+        String nameWithSpaces = name.simpleName().replaceAll("([a-z])([A-Z])", "$1 $2");
 
         MethodSpec fromMethod = MethodSpec.methodBuilder("from")
             .addJavadoc("Converts an Object (usually a String) to the correct value\n" +
@@ -408,7 +411,7 @@ final class TypeClassWriter {
             .build();
 
         TypeSpec.Builder builder = TypeSpec.enumBuilder(name)
-            .addJavadoc("Enumeration with possible values for the " + nameWithSpaces + " property")
+            .addJavadoc("Enumeration with possible values for the \"" + nameWithSpaces + "\" property")
             .addModifiers(Modifier.PUBLIC);
 
         for (String value : values) {

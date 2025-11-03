@@ -74,7 +74,7 @@ public final class CastNodes {
     }
 
     /**
-     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Constraint Type property
+     * Enumeration with possible values for the "Constraint Type" property
      */
     public enum ConstraintType {
         /**
@@ -103,7 +103,7 @@ public final class CastNodes {
     }
 
     /**
-     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Color Space property
+     * Enumeration with possible values for the "Color Space" property
      */
     public enum ColorSpace {
         /**
@@ -127,7 +127,7 @@ public final class CastNodes {
     }
 
     /**
-     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Up Axis property
+     * Enumeration with possible values for the "Up Axis" property
      */
     public enum UpAxis {
         /**
@@ -156,7 +156,7 @@ public final class CastNodes {
     }
 
     /**
-     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Key Property Name property
+     * Enumeration with possible values for the "Key Property Name" property
      */
     public enum KeyPropertyName {
         /**
@@ -215,7 +215,7 @@ public final class CastNodes {
     }
 
     /**
-     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Mode property
+     * Enumeration with possible values for the "Mode" property
      */
     public enum Mode {
         /**
@@ -244,7 +244,7 @@ public final class CastNodes {
     }
 
     /**
-     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Type property
+     * Enumeration with possible values for the "Type" property
      */
     public enum Type {
         /**
@@ -263,7 +263,7 @@ public final class CastNodes {
     }
 
     /**
-     * Enumeration with possible values for the be.twofold.tinycast.Cast Nodes.Skinning Method property
+     * Enumeration with possible values for the "Skinning Method" property
      */
     public enum SkinningMethod {
         /**
@@ -466,17 +466,13 @@ public final class CastNodes {
             return this;
         }
 
-        public Optional<IntBuffer> getVertexColorBufferI32(int index) {
-            return getProperty("String.format(c%d, index)", IntBuffer.class::cast);
+        public Optional<Buffer> getVertexColorBuffer(int index) {
+            return getProperty("String.format(c%d, index)", Buffer.class::cast);
         }
 
         public Mesh addVertexColorBufferI32(IntBuffer vertexColorBuffer) {
             createProperty(CastPropertyID.INTEGER_32, "c" + vertexColorBufferIndex++, vertexColorBuffer);
             return this;
-        }
-
-        public Optional<FloatBuffer> getVertexColorBufferV4(int index) {
-            return getProperty("String.format(c%d, index)", FloatBuffer.class::cast);
         }
 
         public Mesh addVertexColorBufferV4(FloatBuffer vertexColorBuffer) {
@@ -521,7 +517,7 @@ public final class CastNodes {
         }
 
         public Optional<Integer> getColorLayerCount() {
-            return getProperty("cl", Integer.class::cast);
+            return getIntProperty("cl");
         }
 
         public Mesh setColorLayerCount(Integer colorLayerCount) {
@@ -530,7 +526,7 @@ public final class CastNodes {
         }
 
         public Optional<Integer> getUVLayerCount() {
-            return getProperty("ul", Integer.class::cast);
+            return getIntProperty("ul");
         }
 
         public Mesh setUVLayerCount(Integer uVLayerCount) {
@@ -539,7 +535,7 @@ public final class CastNodes {
         }
 
         public Optional<Integer> getMaximumWeightInfluence() {
-            return getProperty("mi", Integer.class::cast);
+            return getIntProperty("mi");
         }
 
         public Mesh setMaximumWeightInfluence(Integer maximumWeightInfluence) {
@@ -916,17 +912,13 @@ public final class CastNodes {
             return this;
         }
 
-        public Optional<Vec3> getCustomOffsetV3() {
-            return getProperty("co", Vec3.class::cast);
+        public Optional<Object> getCustomOffset() {
+            return getProperty("co", Object.class::cast);
         }
 
         public Constraint setCustomOffsetV3(Vec3 customOffset) {
             createProperty(CastPropertyID.VECTOR_3, "co", customOffset);
             return this;
-        }
-
-        public Optional<Vec4> getCustomOffsetV4() {
-            return getProperty("co", Vec4.class::cast);
         }
 
         public Constraint setCustomOffsetV4(Vec4 customOffset) {
@@ -1078,7 +1070,7 @@ public final class CastNodes {
             return this;
         }
 
-        public Buffer getKeyValueBufferInt() {
+        public Buffer getKeyValueBuffer() {
             return getProperty("kv", Buffer.class::cast).orElseThrow();
         }
 
@@ -1087,17 +1079,9 @@ public final class CastNodes {
             return this;
         }
 
-        public FloatBuffer getKeyValueBufferF32() {
-            return getProperty("kv", FloatBuffer.class::cast).orElseThrow();
-        }
-
         public Curve setKeyValueBufferF32(FloatBuffer keyValueBuffer) {
             createProperty(CastPropertyID.FLOAT, "kv", keyValueBuffer);
             return this;
-        }
-
-        public FloatBuffer getKeyValueBufferV4() {
-            return getProperty("kv", FloatBuffer.class::cast).orElseThrow();
         }
 
         public Curve setKeyValueBufferV4(FloatBuffer keyValueBuffer) {

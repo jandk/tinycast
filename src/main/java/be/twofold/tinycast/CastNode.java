@@ -115,6 +115,21 @@ public abstract class CastNode {
             .map(p -> mapper.apply(p.getValue()));
     }
 
+    Optional<Integer> getIntProperty(String name) {
+        return Optional.ofNullable(properties.get(name))
+            .map(p -> {
+                if (p.getValue() instanceof Byte) {
+                    return Byte.toUnsignedInt((Byte) p.getValue());
+                } else if (p.getValue() instanceof Short) {
+                    return Short.toUnsignedInt((Short) p.getValue());
+                } else if (p.getValue() instanceof Integer) {
+                    return (Integer) p.getValue();
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+            });
+    }
+
     <T extends CastNode> T createChild(T child) {
         children.add(child);
         return child;
