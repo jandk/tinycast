@@ -224,7 +224,7 @@ final class TypeClassWriter {
         return MethodSpec.methodBuilder((property.isIndexed() ? "add" : "set") + property.upperCamelCase() + suffix)
             .addModifiers(Modifier.PUBLIC)
             .returns(className)
-            .addParameter(propertyType(property, types), property.variableName())
+            .addParameter(parameterType(property, types), property.variableName())
             .addStatement(generateSetterCode(property, types))
             .addStatement("return this")
             .build();
@@ -370,6 +370,15 @@ final class TypeClassWriter {
         if (!property.isRequired()) {
             return ParameterizedTypeName.get(ClassName.get(Optional.class), type);
         } else if (type.isBoxedPrimitive()) {
+            return type.unbox();
+        } else {
+            return type;
+        }
+    }
+
+    private TypeName parameterType(PropertyDef property, Set<CastPropertyID> types) {
+        TypeName type = propertyType(property, types);
+        if (type.isBoxedPrimitive()) {
             return type.unbox();
         } else {
             return type;

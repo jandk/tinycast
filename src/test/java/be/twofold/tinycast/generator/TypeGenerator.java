@@ -14,9 +14,6 @@ import java.util.stream.Collectors;
 final class TypeGenerator {
     public static void main(String[] args) throws IOException {
         List<TypeDef> types = new TypeParser().parse(TypeGenerator.class.getResourceAsStream("/cast.json"));
-        for (TypeDef type : types) {
-            System.out.println(type);
-        }
 
         Map<CastNodeID, List<String>> arrayTypes = new LinkedHashMap<>();
         for (TypeDef type : types) {

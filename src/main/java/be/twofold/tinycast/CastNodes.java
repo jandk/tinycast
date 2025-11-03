@@ -520,7 +520,7 @@ public final class CastNodes {
             return getIntProperty("cl");
         }
 
-        public Mesh setColorLayerCount(Integer colorLayerCount) {
+        public Mesh setColorLayerCount(int colorLayerCount) {
             createIntProperty("cl", colorLayerCount);
             return this;
         }
@@ -529,7 +529,7 @@ public final class CastNodes {
             return getIntProperty("ul");
         }
 
-        public Mesh setUVLayerCount(Integer uVLayerCount) {
+        public Mesh setUVLayerCount(int uVLayerCount) {
             createIntProperty("ul", uVLayerCount);
             return this;
         }
@@ -538,7 +538,7 @@ public final class CastNodes {
             return getIntProperty("mi");
         }
 
-        public Mesh setMaximumWeightInfluence(Integer maximumWeightInfluence) {
+        public Mesh setMaximumWeightInfluence(int maximumWeightInfluence) {
             createIntProperty("mi", maximumWeightInfluence);
             return this;
         }
@@ -556,7 +556,7 @@ public final class CastNodes {
             return getProperty("m", Long.class::cast);
         }
 
-        public Mesh setMaterial(Long material) {
+        public Mesh setMaterial(long material) {
             createProperty(CastPropertyID.INTEGER_64, "m", material);
             return this;
         }
@@ -603,7 +603,7 @@ public final class CastNodes {
             return getProperty("m", Long.class::cast);
         }
 
-        public Hair setMaterial(Long material) {
+        public Hair setMaterial(long material) {
             createProperty(CastPropertyID.INTEGER_64, "m", material);
             return this;
         }
@@ -632,7 +632,7 @@ public final class CastNodes {
             return getProperty("b", Long.class::cast).orElseThrow();
         }
 
-        public BlendShape setBaseShape(Long baseShape) {
+        public BlendShape setBaseShape(long baseShape) {
             createProperty(CastPropertyID.INTEGER_64, "b", baseShape);
             return this;
         }
@@ -723,7 +723,7 @@ public final class CastNodes {
             return getProperty("p", Integer.class::cast);
         }
 
-        public Bone setParentIndex(Integer parentIndex) {
+        public Bone setParentIndex(int parentIndex) {
             createProperty(CastPropertyID.INTEGER_32, "p", parentIndex);
             return this;
         }
@@ -732,7 +732,7 @@ public final class CastNodes {
             return getProperty("ssc", this::parseBoolean);
         }
 
-        public Bone setSegmentScaleCompensate(Boolean segmentScaleCompensate) {
+        public Bone setSegmentScaleCompensate(boolean segmentScaleCompensate) {
             createProperty(CastPropertyID.BYTE, "ssc", segmentScaleCompensate ? 1 : 0);
             return this;
         }
@@ -806,7 +806,7 @@ public final class CastNodes {
             return getProperty("sb", Long.class::cast).orElseThrow();
         }
 
-        public IkHandle setStartBoneHash(Long startBoneHash) {
+        public IkHandle setStartBoneHash(long startBoneHash) {
             createProperty(CastPropertyID.INTEGER_64, "sb", startBoneHash);
             return this;
         }
@@ -815,7 +815,7 @@ public final class CastNodes {
             return getProperty("eb", Long.class::cast).orElseThrow();
         }
 
-        public IkHandle setEndBoneHash(Long endBoneHash) {
+        public IkHandle setEndBoneHash(long endBoneHash) {
             createProperty(CastPropertyID.INTEGER_64, "eb", endBoneHash);
             return this;
         }
@@ -824,7 +824,7 @@ public final class CastNodes {
             return getProperty("tb", Long.class::cast);
         }
 
-        public IkHandle setTargetBoneHash(Long targetBoneHash) {
+        public IkHandle setTargetBoneHash(long targetBoneHash) {
             createProperty(CastPropertyID.INTEGER_64, "tb", targetBoneHash);
             return this;
         }
@@ -833,7 +833,7 @@ public final class CastNodes {
             return getProperty("pv", Long.class::cast);
         }
 
-        public IkHandle setPoleVectorBoneHash(Long poleVectorBoneHash) {
+        public IkHandle setPoleVectorBoneHash(long poleVectorBoneHash) {
             createProperty(CastPropertyID.INTEGER_64, "pv", poleVectorBoneHash);
             return this;
         }
@@ -842,7 +842,7 @@ public final class CastNodes {
             return getProperty("pb", Long.class::cast);
         }
 
-        public IkHandle setPoleBoneHash(Long poleBoneHash) {
+        public IkHandle setPoleBoneHash(long poleBoneHash) {
             createProperty(CastPropertyID.INTEGER_64, "pb", poleBoneHash);
             return this;
         }
@@ -851,7 +851,7 @@ public final class CastNodes {
             return getProperty("tr", this::parseBoolean);
         }
 
-        public IkHandle setUseTargetRotation(Boolean useTargetRotation) {
+        public IkHandle setUseTargetRotation(boolean useTargetRotation) {
             createProperty(CastPropertyID.BYTE, "tr", useTargetRotation ? 1 : 0);
             return this;
         }
@@ -889,7 +889,7 @@ public final class CastNodes {
             return getProperty("cb", Long.class::cast).orElseThrow();
         }
 
-        public Constraint setConstraintBoneHash(Long constraintBoneHash) {
+        public Constraint setConstraintBoneHash(long constraintBoneHash) {
             createProperty(CastPropertyID.INTEGER_64, "cb", constraintBoneHash);
             return this;
         }
@@ -898,7 +898,7 @@ public final class CastNodes {
             return getProperty("tb", Long.class::cast).orElseThrow();
         }
 
-        public Constraint setTargetBoneHash(Long targetBoneHash) {
+        public Constraint setTargetBoneHash(long targetBoneHash) {
             createProperty(CastPropertyID.INTEGER_64, "tb", targetBoneHash);
             return this;
         }
@@ -907,7 +907,7 @@ public final class CastNodes {
             return getProperty("mo", this::parseBoolean);
         }
 
-        public Constraint setMaintainOffset(Boolean maintainOffset) {
+        public Constraint setMaintainOffset(boolean maintainOffset) {
             createProperty(CastPropertyID.BYTE, "mo", maintainOffset ? 1 : 0);
             return this;
         }
@@ -930,7 +930,7 @@ public final class CastNodes {
             return getProperty("wt", Float.class::cast);
         }
 
-        public Constraint setWeight(Float weight) {
+        public Constraint setWeight(float weight) {
             createProperty(CastPropertyID.FLOAT, "wt", weight);
             return this;
         }
@@ -939,7 +939,7 @@ public final class CastNodes {
             return getProperty("sx", this::parseBoolean);
         }
 
-        public Constraint setSkipX(Boolean skipX) {
+        public Constraint setSkipX(boolean skipX) {
             createProperty(CastPropertyID.BYTE, "sx", skipX ? 1 : 0);
             return this;
         }
@@ -948,7 +948,7 @@ public final class CastNodes {
             return getProperty("sy", this::parseBoolean);
         }
 
-        public Constraint setSkipY(Boolean skipY) {
+        public Constraint setSkipY(boolean skipY) {
             createProperty(CastPropertyID.BYTE, "sy", skipY ? 1 : 0);
             return this;
         }
@@ -957,7 +957,7 @@ public final class CastNodes {
             return getProperty("sz", this::parseBoolean);
         }
 
-        public Constraint setSkipZ(Boolean skipZ) {
+        public Constraint setSkipZ(boolean skipZ) {
             createProperty(CastPropertyID.BYTE, "sz", skipZ ? 1 : 0);
             return this;
         }
@@ -1018,7 +1018,7 @@ public final class CastNodes {
             return getProperty("fr", Float.class::cast).orElseThrow();
         }
 
-        public Animation setFramerate(Float framerate) {
+        public Animation setFramerate(float framerate) {
             createProperty(CastPropertyID.FLOAT, "fr", framerate);
             return this;
         }
@@ -1027,7 +1027,7 @@ public final class CastNodes {
             return getProperty("lo", this::parseBoolean);
         }
 
-        public Animation setLooping(Boolean looping) {
+        public Animation setLooping(boolean looping) {
             createProperty(CastPropertyID.BYTE, "lo", looping ? 1 : 0);
             return this;
         }
@@ -1102,7 +1102,7 @@ public final class CastNodes {
             return getProperty("ab", Float.class::cast);
         }
 
-        public Curve setAdditiveBlendWeight(Float additiveBlendWeight) {
+        public Curve setAdditiveBlendWeight(float additiveBlendWeight) {
             createProperty(CastPropertyID.FLOAT, "ab", additiveBlendWeight);
             return this;
         }
@@ -1141,7 +1141,7 @@ public final class CastNodes {
             return getProperty("ot", this::parseBoolean);
         }
 
-        public CurveModeOverride setOverrideTranslationCurves(Boolean overrideTranslationCurves) {
+        public CurveModeOverride setOverrideTranslationCurves(boolean overrideTranslationCurves) {
             createProperty(CastPropertyID.BYTE, "ot", overrideTranslationCurves ? 1 : 0);
             return this;
         }
@@ -1150,7 +1150,7 @@ public final class CastNodes {
             return getProperty("or", this::parseBoolean);
         }
 
-        public CurveModeOverride setOverrideRotationCurves(Boolean overrideRotationCurves) {
+        public CurveModeOverride setOverrideRotationCurves(boolean overrideRotationCurves) {
             createProperty(CastPropertyID.BYTE, "or", overrideRotationCurves ? 1 : 0);
             return this;
         }
@@ -1159,7 +1159,7 @@ public final class CastNodes {
             return getProperty("os", this::parseBoolean);
         }
 
-        public CurveModeOverride setOverrideScaleCurves(Boolean overrideScaleCurves) {
+        public CurveModeOverride setOverrideScaleCurves(boolean overrideScaleCurves) {
             createProperty(CastPropertyID.BYTE, "os", overrideScaleCurves ? 1 : 0);
             return this;
         }
@@ -1245,7 +1245,7 @@ public final class CastNodes {
             return getProperty("albedo", Long.class::cast);
         }
 
-        public Material setAlbedoHash(Long albedoHash) {
+        public Material setAlbedoHash(long albedoHash) {
             createProperty(CastPropertyID.INTEGER_64, "albedo", albedoHash);
             return this;
         }
@@ -1254,7 +1254,7 @@ public final class CastNodes {
             return getProperty("diffuse", Long.class::cast);
         }
 
-        public Material setDiffuseHash(Long diffuseHash) {
+        public Material setDiffuseHash(long diffuseHash) {
             createProperty(CastPropertyID.INTEGER_64, "diffuse", diffuseHash);
             return this;
         }
@@ -1263,7 +1263,7 @@ public final class CastNodes {
             return getProperty("normal", Long.class::cast);
         }
 
-        public Material setNormalHash(Long normalHash) {
+        public Material setNormalHash(long normalHash) {
             createProperty(CastPropertyID.INTEGER_64, "normal", normalHash);
             return this;
         }
@@ -1272,7 +1272,7 @@ public final class CastNodes {
             return getProperty("specular", Long.class::cast);
         }
 
-        public Material setSpecularHash(Long specularHash) {
+        public Material setSpecularHash(long specularHash) {
             createProperty(CastPropertyID.INTEGER_64, "specular", specularHash);
             return this;
         }
@@ -1281,7 +1281,7 @@ public final class CastNodes {
             return getProperty("gloss", Long.class::cast);
         }
 
-        public Material setGlossHash(Long glossHash) {
+        public Material setGlossHash(long glossHash) {
             createProperty(CastPropertyID.INTEGER_64, "gloss", glossHash);
             return this;
         }
@@ -1290,7 +1290,7 @@ public final class CastNodes {
             return getProperty("roughness", Long.class::cast);
         }
 
-        public Material setRoughnessHash(Long roughnessHash) {
+        public Material setRoughnessHash(long roughnessHash) {
             createProperty(CastPropertyID.INTEGER_64, "roughness", roughnessHash);
             return this;
         }
@@ -1299,7 +1299,7 @@ public final class CastNodes {
             return getProperty("emissive", Long.class::cast);
         }
 
-        public Material setEmissiveHash(Long emissiveHash) {
+        public Material setEmissiveHash(long emissiveHash) {
             createProperty(CastPropertyID.INTEGER_64, "emissive", emissiveHash);
             return this;
         }
@@ -1308,7 +1308,7 @@ public final class CastNodes {
             return getProperty("emask", Long.class::cast);
         }
 
-        public Material setEmissiveMaskHash(Long emissiveMaskHash) {
+        public Material setEmissiveMaskHash(long emissiveMaskHash) {
             createProperty(CastPropertyID.INTEGER_64, "emask", emissiveMaskHash);
             return this;
         }
@@ -1317,7 +1317,7 @@ public final class CastNodes {
             return getProperty("ao", Long.class::cast);
         }
 
-        public Material setAmbientOcclusionHash(Long ambientOcclusionHash) {
+        public Material setAmbientOcclusionHash(long ambientOcclusionHash) {
             createProperty(CastPropertyID.INTEGER_64, "ao", ambientOcclusionHash);
             return this;
         }
@@ -1326,7 +1326,7 @@ public final class CastNodes {
             return getProperty("cavity", Long.class::cast);
         }
 
-        public Material setCavityHash(Long cavityHash) {
+        public Material setCavityHash(long cavityHash) {
             createProperty(CastPropertyID.INTEGER_64, "cavity", cavityHash);
             return this;
         }
@@ -1335,7 +1335,7 @@ public final class CastNodes {
             return getProperty("aniso", Long.class::cast);
         }
 
-        public Material setAnisotropyHash(Long anisotropyHash) {
+        public Material setAnisotropyHash(long anisotropyHash) {
             createProperty(CastPropertyID.INTEGER_64, "aniso", anisotropyHash);
             return this;
         }
@@ -1344,7 +1344,7 @@ public final class CastNodes {
             return getProperty("String.format(extra%d, index)", Long.class::cast);
         }
 
-        public Material addExtra(Long extra) {
+        public Material addExtra(long extra) {
             createProperty(CastPropertyID.INTEGER_64, "extra" + extraIndex++, extra);
             return this;
         }
@@ -1439,7 +1439,7 @@ public final class CastNodes {
             return getProperty("rf", Long.class::cast).orElseThrow();
         }
 
-        public Instance setReferenceFile(Long referenceFile) {
+        public Instance setReferenceFile(long referenceFile) {
             createProperty(CastPropertyID.INTEGER_64, "rf", referenceFile);
             return this;
         }
