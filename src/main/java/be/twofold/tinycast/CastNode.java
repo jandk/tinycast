@@ -174,4 +174,37 @@ public abstract class CastNode {
                 throw new IllegalArgumentException("Expected 0 or 1 but got " + i);
         }
     }
+
+    @Override
+    public final boolean equals(Object obj) {
+        if (!(obj instanceof CastNode)) {
+            return false;
+        }
+
+        CastNode other = (CastNode) obj;
+        return hash == other.hash
+            && identifier == other.identifier
+            && properties.equals(other.properties)
+            && children.equals(other.children);
+    }
+
+    @Override
+    public final int hashCode() {
+        int result = 1;
+        result = 31 * result + identifier.hashCode();
+        result = 31 * result + Long.hashCode(hash);
+        result = 31 * result + properties.hashCode();
+        result = 31 * result + children.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "CastNode(" +
+            "identifier=" + identifier + ", " +
+            "hash=" + hash + ", " +
+            properties.size() + " properties, " +
+            children.size() + " children" +
+            ")";
+    }
 }
