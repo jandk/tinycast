@@ -35,7 +35,7 @@ class CastTest {
     }
 
     private Cast createCast() {
-        var cast = Cast.create();
+        var cast = Cast.create(0x5A4C524E454C4156L);
         var root = cast.createRoot();
 
         var model = root.createModel()

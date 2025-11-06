@@ -6,6 +6,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -22,7 +23,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see CastNodes.Root
  */
 public final class Cast extends AbstractList<CastNode> {
-    private static final long INITIAL_HASH = 0x5A4C524E454C4156L;
     private final AtomicLong hasher;
     private final List<CastNode> rootNodes;
 
@@ -43,7 +43,7 @@ public final class Cast extends AbstractList<CastNode> {
      * @return a new empty Cast instance
      */
     public static Cast create() {
-        return new Cast(INITIAL_HASH, new ArrayList<>());
+        return create(ThreadLocalRandom.current().nextLong());
     }
 
     /**
