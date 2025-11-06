@@ -21,18 +21,18 @@ final class Buffers {
         }
 
         if (buffer instanceof ShortBuffer) {
-            ShortBuffer duplicate = ((ShortBuffer) buffer).duplicate().rewind();
+            ShortBuffer slice = ((ShortBuffer) buffer).slice();
 
             int max = 0;
-            while (duplicate.hasRemaining()) {
-                max = Math.max(max, Short.toUnsignedInt(duplicate.get()));
+            while (slice.hasRemaining()) {
+                max = Math.max(max, Short.toUnsignedInt(slice.get()));
             }
 
-            duplicate.rewind();
+            slice.rewind();
             if (max <= 0xFF) {
-                ByteBuffer result = ByteBuffer.allocate(duplicate.limit());
-                while (duplicate.hasRemaining()) {
-                    result.put((byte) duplicate.get());
+                ByteBuffer result = ByteBuffer.allocate(slice.remaining());
+                while (slice.hasRemaining()) {
+                    result.put((byte) slice.get());
                 }
                 return result.flip();
             }
@@ -40,25 +40,25 @@ final class Buffers {
         }
 
         if (buffer instanceof IntBuffer) {
-            IntBuffer duplicate = ((IntBuffer) buffer).duplicate().rewind();
+            IntBuffer slice = ((IntBuffer) buffer).slice();
 
             long max = 0;
-            while (duplicate.hasRemaining()) {
-                max = Math.max(max, Integer.toUnsignedLong(duplicate.get()));
+            while (slice.hasRemaining()) {
+                max = Math.max(max, Integer.toUnsignedLong(slice.get()));
             }
 
-            duplicate.rewind();
+            slice.rewind();
             if (max <= 0xFF) {
-                ByteBuffer result = ByteBuffer.allocate(duplicate.limit());
-                while (duplicate.hasRemaining()) {
-                    result.put((byte) duplicate.get());
+                ByteBuffer result = ByteBuffer.allocate(slice.remaining());
+                while (slice.hasRemaining()) {
+                    result.put((byte) slice.get());
                 }
                 return result.flip();
             }
             if (max <= 0xFFFF) {
-                ShortBuffer result = ShortBuffer.allocate(duplicate.limit());
-                while (duplicate.hasRemaining()) {
-                    result.put((short) duplicate.get());
+                ShortBuffer result = ShortBuffer.allocate(slice.remaining());
+                while (slice.hasRemaining()) {
+                    result.put((short) slice.get());
                 }
                 return result.flip();
             }
@@ -69,22 +69,21 @@ final class Buffers {
     }
 
     static byte[] toByteArray(Buffer buffer) {
-        buffer.rewind();
-
-        if (buffer instanceof ByteBuffer) {
-            return allocateAndApply(buffer.limit(), bb -> bb.put((ByteBuffer) buffer));
-        } else if (buffer instanceof ShortBuffer) {
-            return allocateAndApply(buffer.limit() * Short.BYTES, bb -> bb.asShortBuffer().put((ShortBuffer) buffer));
-        } else if (buffer instanceof IntBuffer) {
-            return allocateAndApply(buffer.limit() * Integer.BYTES, bb -> bb.asIntBuffer().put((IntBuffer) buffer));
-        } else if (buffer instanceof LongBuffer) {
-            return allocateAndApply(buffer.limit() * Long.BYTES, bb -> bb.asLongBuffer().put((LongBuffer) buffer));
-        } else if (buffer instanceof FloatBuffer) {
-            return allocateAndApply(buffer.limit() * Float.BYTES, bb -> bb.asFloatBuffer().put((FloatBuffer) buffer));
-        } else if (buffer instanceof DoubleBuffer) {
-            return allocateAndApply(buffer.limit() * Double.BYTES, bb -> bb.asDoubleBuffer().put((DoubleBuffer) buffer));
-        } else if (buffer instanceof CharBuffer) {
-            return allocateAndApply(buffer.limit() * Character.BYTES, bb -> bb.asCharBuffer().put((CharBuffer) buffer));
+        Buffer slice = buffer.slice();
+        if (slice instanceof ByteBuffer) {
+            return allocateAndApply(slice.remaining(), bb -> bb.put((ByteBuffer) slice));
+        } else if (slice instanceof ShortBuffer) {
+            return allocateAndApply(slice.remaining() * Short.BYTES, bb -> bb.asShortBuffer().put((ShortBuffer) slice));
+        } else if (slice instanceof IntBuffer) {
+            return allocateAndApply(slice.remaining() * Integer.BYTES, bb -> bb.asIntBuffer().put((IntBuffer) slice));
+        } else if (slice instanceof LongBuffer) {
+            return allocateAndApply(slice.remaining() * Long.BYTES, bb -> bb.asLongBuffer().put((LongBuffer) slice));
+        } else if (slice instanceof FloatBuffer) {
+            return allocateAndApply(slice.remaining() * Float.BYTES, bb -> bb.asFloatBuffer().put((FloatBuffer) slice));
+        } else if (slice instanceof DoubleBuffer) {
+            return allocateAndApply(slice.remaining() * Double.BYTES, bb -> bb.asDoubleBuffer().put((DoubleBuffer) slice));
+        } else if (slice instanceof CharBuffer) {
+            return allocateAndApply(slice.remaining() * Character.BYTES, bb -> bb.asCharBuffer().put((CharBuffer) slice));
         } else {
             throw new UnsupportedOperationException();
         }

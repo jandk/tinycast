@@ -20,14 +20,14 @@ class CastTest {
 
     @Test
     void testRead() throws Exception {
-        var bytes = Base64.getDecoder().decode(BASIC_CAST);
+        byte[] bytes = Base64.getDecoder().decode(BASIC_CAST);
         Cast cast = Cast.read(new ByteArrayInputStream(bytes));
         assertThat(cast).isEqualTo(createCast());
     }
 
     @Test
     void testWrite() throws Exception {
-        var baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createCast().write(baos);
 
         assertThat(Base64.getEncoder().encodeToString(baos.toByteArray()))
@@ -35,20 +35,20 @@ class CastTest {
     }
 
     private Cast createCast() {
-        var cast = Cast.create(0x5A4C524E454C4156L);
-        var root = cast.createRoot();
+        Cast cast = Cast.create(0x5A4C524E454C4156L);
+        CastNodes.Root root = cast.createRoot();
 
-        var model = root.createModel()
+        CastNodes.Model model = root.createModel()
             .setName("Triangle");
 
-        var positions = new float[]{
+        float[] positions = new float[]{
             -1.0f, -1.0f, +0.0f,
             +1.0f, -1.0f, +0.0f,
             +0.0f, +1.0f, +0.0f
         };
 
         // One face (3 indices)
-        var faces = new int[]{0, 1, 2};
+        int[] faces = new int[]{0, 1, 2};
 
         model.createMesh()
             .setName("Triangle")

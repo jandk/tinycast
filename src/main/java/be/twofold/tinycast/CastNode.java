@@ -167,9 +167,9 @@ public abstract class CastNode {
         int i = ((Number) value).intValue();
         switch (i) {
             case 0:
-                return true;
-            case 1:
                 return false;
+            case 1:
+                return true;
             default:
                 throw new IllegalArgumentException("Expected 0 or 1 but got " + i);
         }
