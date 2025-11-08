@@ -115,11 +115,11 @@ public final class CastProperty {
         if (!(value instanceof Buffer)) {
             return 1;
         }
-        int limit = ((Buffer) value).limit();
-        if (limit % identifier.getCount() != 0) {
+        int remaining = ((Buffer) value).remaining();
+        if (remaining % identifier.getCount() != 0) {
             throw new IllegalArgumentException("Limit of buffer is not a multiple of count");
         }
-        return limit / identifier.getCount();
+        return remaining / identifier.getCount();
     }
 
     @Override
