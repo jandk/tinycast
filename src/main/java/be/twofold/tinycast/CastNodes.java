@@ -1421,6 +1421,26 @@ public final class CastNodes {
         }
 
         /**
+         * Returns the value of the {@code "to"} property (Target Offset).
+         *
+         * @return The value of the {@code "to"} property
+         */
+        public Optional<Vec3> getTargetOffset() {
+            return getProperty("to", Vec3.class::cast);
+        }
+
+        /**
+         * Sets the value of the {@code "to"} property (Target Offset).
+         *
+         * @param targetOffset The new value.
+         * @return The {@code this} instance for chaining
+         */
+        public IkHandle setTargetOffset(Vec3 targetOffset) {
+            createProperty(CastPropertyID.VECTOR_3, "to", targetOffset);
+            return this;
+        }
+
+        /**
          * Returns the value of the {@code "pv"} property (Pole Vector Bone Hash).
          *
          * @return The value of the {@code "pv"} property

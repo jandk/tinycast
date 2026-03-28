@@ -82,6 +82,7 @@
       {"key": "sb", "name": "Start Bone Hash", "array": false, "required": true, "types": ["l"]},
       {"key": "eb", "name": "End Bone Hash", "array": false, "required": true, "types": ["l"]},
       {"key": "tb", "name": "Target Bone Hash", "array": false, "required": false, "types": ["l"]},
+      {"key": "to", "name": "Target Offset", "array": false, "required": false, "types": ["v3"]},
       {"key": "pv", "name": "Pole Vector Bone Hash", "array": false, "required": false, "types": ["l"]},
       {"key": "pb", "name": "Pole Bone Hash", "array": false, "required": false, "types": ["l"]},
       {"key": "tr", "name": "Use Target Rotation", "array": false, "required": false, "types": ["b"], "values": ["True", "False"]}
