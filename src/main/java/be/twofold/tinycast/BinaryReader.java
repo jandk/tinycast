@@ -78,7 +78,7 @@ final class BinaryReader implements Closeable {
     }
 
     private void buffer(int length) throws IOException {
-        int read = in.read(buffer.array(), 0, length);
+        int read = in.readNBytes(buffer.array(), 0, length);
         if (read != length) {
             throw new EOFException("Expected " + length + " bytes but got " + read);
         }
