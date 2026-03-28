@@ -53,6 +53,6 @@ final class BinaryWriter implements Closeable {
 
     @Override
     public void close() throws IOException {
-        out.flush();
+        out.close();
     }
 }
