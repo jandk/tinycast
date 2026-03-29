@@ -17,6 +17,8 @@ final class CastWriter {
     static void write(Cast cast, OutputStream out) throws CastException {
         try (BinaryWriter writer = new BinaryWriter(new BufferedOutputStream(out))) {
             new CastWriter(writer).write(cast);
+        } catch (CastException e) {
+            throw e;
         } catch (IOException e) {
             throw new CastException("Error writing cast file", e);
         }

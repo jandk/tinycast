@@ -8,7 +8,7 @@ import java.io.IOException;
  * This exception is thrown when reading or writing Cast streams fails due to
  * malformed input, unknown identifiers, or other format-related issues.
  */
-public final class CastException extends IOException {
+public class CastException extends IOException {
     /**
      * Creates a new exception with the specified detail message.
      *

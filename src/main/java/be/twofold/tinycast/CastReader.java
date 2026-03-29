@@ -30,15 +30,17 @@ final class CastReader {
     static Cast read(InputStream in) throws CastException {
         try (BinaryReader reader = new BinaryReader(new BufferedInputStream(in))) {
             return new CastReader(reader).read();
+        } catch (CastException e) {
+            throw e;
         } catch (IOException e) {
             throw new CastException("Error reading cast file", e);
         }
     }
 
-    private Cast read() throws CastException, IOException {
+    private Cast read() throws IOException {
         int magic = reader.readInt();
         if (magic != 0x74736163) {
-            throw new CastException("Invalid magic number: " + magic);
+            throw new CastException("Invalid magic number: 0x" + Integer.toHexString(magic));
         }
 
         int version = reader.readInt();
@@ -59,8 +61,13 @@ final class CastReader {
         return new Cast(rootNodes);
     }
 
-    private CastNode readNode() throws CastException, IOException {
-        CastNodeID identifier = CastNodeID.fromValue(reader.readInt());
+    private CastNode readNode() throws IOException {
+        CastNodeID identifier;
+        try {
+            identifier = CastNodeID.fromValue(reader.readInt());
+        } catch (IllegalArgumentException e) {
+            throw new CastException(e.getMessage());
+        }
         int nodeSize = reader.readInt();
         long nodeHash = reader.readLong();
         int propertyCount = reader.readInt();
@@ -80,8 +87,13 @@ final class CastReader {
         return CastNodes.create(identifier, nodeHash, properties, children);
     }
 
-    private CastProperty readProperty(CastNodeID typeId) throws CastException, IOException {
-        CastPropertyID identifier = CastPropertyID.fromValue(reader.readShort());
+    private CastProperty readProperty(CastNodeID typeId) throws IOException {
+        CastPropertyID identifier;
+        try {
+            identifier = CastPropertyID.fromValue(reader.readShort());
+        } catch (IllegalArgumentException e) {
+            throw new CastException(e.getMessage());
+        }
         short nameSize = reader.readShort();
         int arrayLength = reader.readInt();
 
@@ -128,7 +140,7 @@ final class CastReader {
                 return new Vec4(x, y, z, w);
             }
             default:
-                throw new UnsupportedOperationException();
+                throw new AssertionError();
         }
     }
 
@@ -151,7 +163,7 @@ final class CastReader {
             case DOUBLE:
                 return buffer.asDoubleBuffer();
             default:
-                throw new UnsupportedOperationException();
+                throw new AssertionError();
         }
     }
 }

@@ -115,16 +115,16 @@ public enum CastPropertyID {
     /**
      * Resolves a {@code CastPropertyID} from its 16-bit identifier value.
      * <p>
-     * If the value is not recognized, a {@link CastException} is thrown.
+     * If the value is not recognized, a {@link IllegalArgumentException} is thrown.
      *
      * @param value the short identifier read from a Cast stream
      * @return the matching {@code CastPropertyID}
-     * @throws CastException if the value does not map to a known property type
+     * @throws IllegalArgumentException if the value does not map to a known property type
      */
-    public static CastPropertyID fromValue(short value) throws CastException {
+    public static CastPropertyID fromValue(short value) {
         CastPropertyID result = INDEX.get(value);
         if (result == null) {
-            throw new CastException("Unknown CastPropertyID: " + value);
+            throw new IllegalArgumentException("Unknown CastPropertyID: 0x" + Integer.toHexString(Short.toUnsignedInt(value)));
         }
         return result;
     }

@@ -197,17 +197,17 @@ public enum CastNodeID {
     /**
      * Resolves a {@code CastNodeID} from its 32-bit little-endian integer value.
      * <p>
-     * If the value is not recognized as a registered node type, a {@link CastException}
+     * If the value is not recognized as a registered node type, a {@link IllegalArgumentException}
      * is thrown instead of returning {@code null}.
      *
      * @param value the integer identifier read from a Cast stream
      * @return the matching {@code CastNodeID}
-     * @throws CastException if the value does not map to a known node type
+     * @throws IllegalArgumentException if the value does not map to a known node type
      */
-    public static CastNodeID fromValue(int value) throws CastException {
+    public static CastNodeID fromValue(int value) {
         CastNodeID result = INDEX.get(value);
         if (result == null) {
-            throw new CastException("Unknown CastNodeID: " + value);
+            throw new IllegalArgumentException("Unknown CastNodeID: 0x" + Integer.toHexString(value));
         }
         return result;
     }

@@ -62,7 +62,7 @@ class CastTest {
         // One face (3 indices)
         int[] faces = new int[]{0, 1, 2};
 
-        var positionBuffer = FloatBuffer.wrap(positions);
+        FloatBuffer positionBuffer = FloatBuffer.wrap(positions);
         if (flip) {
             positionBuffer.position(positionBuffer.limit());
         }
