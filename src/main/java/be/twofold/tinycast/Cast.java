@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -113,6 +114,48 @@ public final class Cast {
      */
     public void write(OutputStream out) throws CastException {
         CastWriter.write(this, out);
+    }
+
+    /**
+     * Finds a node in this Cast by its hash value.
+     *
+     * @param hash the hash to search for
+     * @return the node with the given hash, or empty if not found
+     */
+    public Optional<CastNode> findNodeByHash(long hash) {
+        for (CastNode root : rootNodes) {
+            Optional<CastNode> result = findNodeByHash(root, hash);
+            if (result.isPresent()) {
+                return result;
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Finds a node of a specific type in this Cast by its hash value.
+     *
+     * @param hash the hash to search for
+     * @param type the expected type of the node
+     * @return the node with the given hash cast to the expected type, or empty if not found or wrong type
+     */
+    public <T extends CastNode> Optional<T> findNodeByHash(long hash, Class<T> type) {
+        return findNodeByHash(hash)
+            .filter(type::isInstance)
+            .map(type::cast);
+    }
+
+    private Optional<CastNode> findNodeByHash(CastNode node, long hash) {
+        if (node.getHash() == hash) {
+            return Optional.of(node);
+        }
+        for (CastNode child : node.children) {
+            Optional<CastNode> result = findNodeByHash(child, hash);
+            if (result.isPresent()) {
+                return result;
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

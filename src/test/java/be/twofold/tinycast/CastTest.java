@@ -46,6 +46,22 @@ class CastTest {
             .isThrownBy(() -> Cast.read(new ByteArrayInputStream(baos.toByteArray())));
     }
 
+    @Test
+    void testFindNodeByHash() {
+        Cast cast = createCast(false);
+        CastNodes.Root root = (CastNodes.Root) cast.getRootNodes().get(0);
+        CastNodes.Model model = root.getModels().get(0);
+        CastNodes.Mesh mesh = model.getMeshes().get(0);
+
+        assertThat(cast.findNodeByHash(root.getHash())).contains(root);
+        assertThat(cast.findNodeByHash(model.getHash())).contains(model);
+        assertThat(cast.findNodeByHash(mesh.getHash())).contains(mesh);
+
+        assertThat(cast.findNodeByHash(mesh.getHash(), CastNodes.Mesh.class)).contains(mesh);
+        assertThat(cast.findNodeByHash(mesh.getHash(), CastNodes.Model.class)).isEmpty();
+        assertThat(cast.findNodeByHash(-1L)).isEmpty();
+    }
+
     private Cast createCast(boolean flip) {
         Cast cast = Cast.create(0x5A4C524E454C4156L);
         CastNodes.Root root = cast.createRoot();
