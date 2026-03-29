@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
  * Each constant defines:
  * <ul>
  *   <li>an unsigned 16-bit identifier value stored in the stream (little-endian)</li>
- *   <li>the byte size of a single element of that type</li>
- *   <li>the number of elements that make up one logical value (e.g. vectors)</li>
+ *   <li>the total byte size of one logical value of that type</li>
+ *   <li>the number of scalar components that make up one logical value (e.g. 3 for a Vec3)</li>
  * </ul>
- * The combination of {@code size} and {@code count} determines how many bytes are
- * consumed for a single value: {@code size * count}. For arrays, the element size is
- * multiplied by the array length.
+ * The byte size of a single value is given by {@code size}; for arrays, multiply by the
+ * array length. {@code count} describes the component structure and does not factor into
+ * the byte size calculation.
  */
 public enum CastPropertyID {
     /**
@@ -87,14 +87,13 @@ public enum CastPropertyID {
     }
 
     /**
-     * Returns the size in bytes of a single element of this property type.
+     * Returns the total size in bytes of a single logical value of this property type.
      * <p>
-     * For scalar types (e.g., {@link #INTEGER_32}) the size corresponds to the
-     * full value. For vector types (e.g., {@link #VECTOR_3}) this is the size of
-     * one component; multiply by {@link #getCount()} to get the total bytes for a
-     * single logical value.
+     * For scalar types (e.g., {@link #INTEGER_32}) this is the size of the scalar itself.
+     * For vector types (e.g., {@link #VECTOR_3}) this is the size of the entire vector
+     * (e.g., 12 bytes for a Vec3 of three 4-byte floats), not the per-component size.
      *
-     * @return the element size in bytes
+     * @return the total size of one value in bytes
      */
     public int getSize() {
         return size;

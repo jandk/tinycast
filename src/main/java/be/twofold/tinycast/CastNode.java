@@ -136,6 +136,12 @@ public abstract class CastNode {
         return child;
     }
 
+    /**
+     * Removes a child node from this node.
+     *
+     * @param child the child node to remove
+     * @return {@code true} if the child was present and removed, {@code false} otherwise
+     */
     public boolean removeChild(CastNode child) {
         if (children.remove(child)) {
             cachedLength = -1;

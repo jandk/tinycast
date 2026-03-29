@@ -402,7 +402,7 @@ public final class CastNodes {
         /**
          * Returns the child of type {@link Skeleton}.
          *
-         * @return The single Skeletons
+         * @return The single Skeleton
          */
         public Optional<Skeleton> getSkeleton() {
             return getChildOfType(Skeleton.class);
@@ -1772,7 +1772,7 @@ public final class CastNodes {
         /**
          * Returns the child of type {@link Skeleton}.
          *
-         * @return The single Skeletons
+         * @return The single Skeleton
          */
         public Optional<Skeleton> getSkeleton() {
             return getChildOfType(Skeleton.class);

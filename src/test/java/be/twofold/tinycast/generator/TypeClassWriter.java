@@ -173,7 +173,7 @@ final class TypeClassWriter {
         MethodSpec getter = MethodSpec.methodBuilder("get" + (single ? childClassName : multiple(childClassName)))
             .addJavadoc("Returns the child" + (single ? "" : "ren") + " of type {@link " + childClassName + "}.\n" +
                 "\n" +
-                "@return The " + (single ? "single" : "list of") + " " + multiple(childClassName))
+                "@return The " + (single ? "single " + childClassName : "list of " + multiple(childClassName)))
             .addModifiers(Modifier.PUBLIC)
             .returns(returnType)
             .addStatement("return $L($T.class)", methodName, childType)
