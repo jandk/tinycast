@@ -114,4 +114,20 @@ public final class Cast {
     public void write(OutputStream out) throws CastException {
         CastWriter.write(this, out);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Cast
+            && rootNodes.equals(((Cast) o).rootNodes);
+    }
+
+    @Override
+    public int hashCode() {
+        return rootNodes.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Cast(" + rootNodes.size() + " root nodes)";
+    }
 }

@@ -13,6 +13,7 @@ class CastNodeTest {
             .forClass(CastNode.class)
             .suppress(Warning.NULL_FIELDS)
             .withIgnoredFields("hasher")
+            .withIgnoredFields("cachedLength")
             .withPrefabValues(CastNode.class,
                 new CastNodes.Color(new AtomicLong()),
                 new CastNodes.File(new AtomicLong()))
