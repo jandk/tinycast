@@ -12,7 +12,6 @@ import be.twofold.tinycast.generator.model.TypeDef;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -114,15 +113,6 @@ final class TypeClassWriter {
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
             .superclass(SUPER_CLASS);
 
-        List<PropertyDef> indexedProperties = type.properties().stream()
-            .filter(prop -> prop.getKey().contains("%d"))
-            .collect(Collectors.toList());
-
-        for (PropertyDef property : indexedProperties) {
-            builder.addField(FieldSpec.builder(int.class, indexName(property))
-                .addModifiers(Modifier.PRIVATE)
-                .build());
-        }
 
         // Constructors
         builder.addMethod(MethodSpec.constructorBuilder()
@@ -146,6 +136,9 @@ final class TypeClassWriter {
         for (PropertyDef property : type.properties()) {
             List<Set<CastPropertyID>> types = splitTypes(property.getTypes());
             builder.addMethod(generatePropertyGetter(property, property.getTypes()));
+            if (property.isIndexed()) {
+                builder.addMethod(generatePropertyCount(property));
+            }
             for (Set<CastPropertyID> subTypes : types) {
                 String suffix = types.size() == 1 ? "" : suffix(subTypes);
                 builder.addMethod(generatePropertySetter(property, subTypes, suffix, className));
@@ -196,6 +189,20 @@ final class TypeClassWriter {
             .build();
 
         return List.of(getter, creator);
+    }
+
+    private MethodSpec generatePropertyCount(PropertyDef property) {
+        String prefix = property.getKey().replace("%d", "");
+        return MethodSpec.methodBuilder("get" + property.upperCamelCase() + "Count")
+            .addJavadoc("Returns the number of {@code \"" + property.getKey() + "\"} properties (" + property.getName() + ").")
+            .addModifiers(Modifier.PUBLIC)
+            .returns(int.class)
+            .beginControlFlow("for (int count = 0; ; count++)")
+            .beginControlFlow("if (!properties.containsKey($S + count))", prefix)
+            .addStatement("return count")
+            .endControlFlow()
+            .endControlFlow()
+            .build();
     }
 
     private MethodSpec generatePropertyGetter(PropertyDef property, Set<CastPropertyID> types) {
@@ -255,7 +262,7 @@ final class TypeClassWriter {
 
     private CodeBlock generateSetterCode(PropertyDef property, Set<CastPropertyID> types) {
         String setKey = property.isIndexed()
-            ? '"' + property.getKey().replace("%d", "") + '"' + " + " + indexName(property) + "++"
+            ? '"' + property.getKey().replace("%d", "") + '"' + " + get" + property.upperCamelCase() + "Count()"
             : '"' + property.getKey() + '"';
 
         if (types.equals(INTEGER_TYPES)) {
@@ -473,7 +480,4 @@ final class TypeClassWriter {
             .collect(Collectors.joining());
     }
 
-    private String indexName(PropertyDef property) {
-        return property.variableName() + "Index";
-    }
 }

@@ -574,10 +574,6 @@ public final class CastNodes {
      * Implementation of the "Mesh" node
      */
     public static final class Mesh extends CastNode {
-        private int vertexColorBufferIndex;
-
-        private int vertexUVBufferIndex;
-
         Mesh(AtomicLong hasher) {
             super(CastNodeID.MESH, hasher);
         }
@@ -679,13 +675,24 @@ public final class CastNodes {
         }
 
         /**
+         * Returns the number of {@code "c%d"} properties (Vertex Color Buffer).
+         */
+        public int getVertexColorBufferCount() {
+            for (int count = 0; ; count++) {
+                if (!properties.containsKey("c" + count)) {
+                    return count;
+                }
+            }
+        }
+
+        /**
          * Sets the value of the {@code "c%d"} property (Vertex Color Buffer).
          *
          * @param vertexColorBuffer The new value.
          * @return The {@code this} instance for chaining
          */
         public Mesh addVertexColorBufferI32(IntBuffer vertexColorBuffer) {
-            createProperty(CastPropertyID.INTEGER_32, "c" + vertexColorBufferIndex++, vertexColorBuffer);
+            createProperty(CastPropertyID.INTEGER_32, "c" + getVertexColorBufferCount(), vertexColorBuffer);
             return this;
         }
 
@@ -696,7 +703,7 @@ public final class CastNodes {
          * @return The {@code this} instance for chaining
          */
         public Mesh addVertexColorBufferV4(FloatBuffer vertexColorBuffer) {
-            createProperty(CastPropertyID.VECTOR_4, "c" + vertexColorBufferIndex++, vertexColorBuffer);
+            createProperty(CastPropertyID.VECTOR_4, "c" + getVertexColorBufferCount(), vertexColorBuffer);
             return this;
         }
 
@@ -711,13 +718,24 @@ public final class CastNodes {
         }
 
         /**
+         * Returns the number of {@code "u%d"} properties (Vertex UV Buffer).
+         */
+        public int getVertexUVBufferCount() {
+            for (int count = 0; ; count++) {
+                if (!properties.containsKey("u" + count)) {
+                    return count;
+                }
+            }
+        }
+
+        /**
          * Sets the value of the {@code "u%d"} property (Vertex UV Buffer).
          *
          * @param vertexUVBuffer The new value.
          * @return The {@code this} instance for chaining
          */
         public Mesh addVertexUVBuffer(FloatBuffer vertexUVBuffer) {
-            createProperty(CastPropertyID.VECTOR_2, "u" + vertexUVBufferIndex++, vertexUVBuffer);
+            createProperty(CastPropertyID.VECTOR_2, "u" + getVertexUVBufferCount(), vertexUVBuffer);
             return this;
         }
 
@@ -2215,8 +2233,6 @@ public final class CastNodes {
      * Implementation of the "Material" node
      */
     public static final class Material extends CastNode {
-        private int extraIndex;
-
         Material(AtomicLong hasher) {
             super(CastNodeID.MATERIAL, hasher);
         }
@@ -2534,13 +2550,24 @@ public final class CastNodes {
         }
 
         /**
+         * Returns the number of {@code "extra%d"} properties (Extra).
+         */
+        public int getExtraCount() {
+            for (int count = 0; ; count++) {
+                if (!properties.containsKey("extra" + count)) {
+                    return count;
+                }
+            }
+        }
+
+        /**
          * Sets the value of the {@code "extra%d"} property (Extra).
          *
          * @param extra The new value.
          * @return The {@code this} instance for chaining
          */
         public Material addExtra(long extra) {
-            createProperty(CastPropertyID.INTEGER_64, "extra" + extraIndex++, extra);
+            createProperty(CastPropertyID.INTEGER_64, "extra" + getExtraCount(), extra);
             return this;
         }
     }
