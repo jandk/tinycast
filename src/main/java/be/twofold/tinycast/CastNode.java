@@ -136,6 +136,14 @@ public abstract class CastNode {
         return child;
     }
 
+    public boolean removeChild(CastNode child) {
+        if (children.remove(child)) {
+            cachedLength = -1;
+            return true;
+        }
+        return false;
+    }
+
     void createProperty(CastPropertyID identifier, String name, Object value) {
         properties.put(name, new CastProperty(identifier, name, value));
         cachedLength = -1;

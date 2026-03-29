@@ -47,6 +47,21 @@ class CastTest {
     }
 
     @Test
+    void testRemoveChild() {
+        Cast cast = createCast(false);
+        CastNodes.Root root = (CastNodes.Root) cast.getRootNodes().get(0);
+        CastNodes.Model model = root.getModels().get(0);
+        CastNodes.Mesh mesh = model.getMeshes().get(0);
+
+        assertThat(model.removeChild(mesh)).isTrue();
+        assertThat(model.getMeshes()).isEmpty();
+        assertThat(model.removeChild(mesh)).isFalse();
+
+        // Length cache should be invalidated
+        assertThat(cast.findNodeByHash(mesh.getHash())).isEmpty();
+    }
+
+    @Test
     void testFindNodeByHash() {
         Cast cast = createCast(false);
         CastNodes.Root root = (CastNodes.Root) cast.getRootNodes().get(0);
