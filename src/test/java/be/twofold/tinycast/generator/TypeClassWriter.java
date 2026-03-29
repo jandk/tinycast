@@ -217,21 +217,21 @@ final class TypeClassWriter {
 
     private CodeBlock generateGetterCode(PropertyDef property, Set<CastPropertyID> types) {
         String required = property.isRequired() ? ".orElseThrow()" : "";
-        String name = property.isIndexed()
-            ? "String.format(" + property.getKey() + ", index)"
-            : property.getKey();
+        CodeBlock name = property.isIndexed()
+            ? CodeBlock.of("$T.format($S, index)", String.class, property.getKey())
+            : CodeBlock.of("$S", property.getKey());
         TypeName type = propertyType(property, types);
 
         switch (property.getType()) {
             case SIMPLE:
                 if (!property.isArray() && types.equals(INTEGER_TYPES)) {
-                    return CodeBlock.of("return getIntProperty($S)" + required, name);
+                    return CodeBlock.of("return getIntProperty($L)" + required, name);
                 }
-                return CodeBlock.of("return getProperty($S, $T.class::cast)" + required, name, type);
+                return CodeBlock.of("return getProperty($L, $T.class::cast)" + required, name, type);
             case ENUM:
-                return CodeBlock.of("return getProperty($S, $T::from)" + required, name, type);
+                return CodeBlock.of("return getProperty($L, $T::from)" + required, name, type);
             case BOOL:
-                return CodeBlock.of("return getProperty($S, this::parseBoolean)" + required, name);
+                return CodeBlock.of("return getProperty($L, this::parseBoolean)" + required, name);
             default:
                 throw new UnsupportedOperationException();
         }

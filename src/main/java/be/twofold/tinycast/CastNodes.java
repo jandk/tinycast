@@ -672,7 +672,7 @@ public final class CastNodes {
          * @return The value of the {@code "c%d"} property
          */
         public Optional<Buffer> getVertexColorBuffer(int index) {
-            return getProperty("String.format(c%d, index)", Buffer.class::cast);
+            return getProperty(String.format("c%d", index), Buffer.class::cast);
         }
 
         /**
@@ -704,7 +704,7 @@ public final class CastNodes {
          * @return The value of the {@code "u%d"} property
          */
         public Optional<FloatBuffer> getVertexUVBuffer(int index) {
-            return getProperty("String.format(u%d, index)", FloatBuffer.class::cast);
+            return getProperty(String.format("u%d", index), FloatBuffer.class::cast);
         }
 
         /**
@@ -2518,7 +2518,7 @@ public final class CastNodes {
          * @return The value of the {@code "extra%d"} property
          */
         public Optional<Long> getExtra(int index) {
-            return getProperty("String.format(extra%d, index)", Long.class::cast);
+            return getProperty(String.format("extra%d", index), Long.class::cast);
         }
 
         /**
