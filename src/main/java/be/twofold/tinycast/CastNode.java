@@ -41,6 +41,7 @@ public abstract class CastNode {
     final AtomicLong hasher;
     final Map<String, CastProperty> properties;
     final List<CastNode> children;
+    private int cachedLength = -1;
 
     private CastNode(CastNodeID identifier, long hash, AtomicLong hasher, Map<String, CastProperty> properties, List<CastNode> children) {
         this.identifier = Objects.requireNonNull(identifier);
@@ -86,14 +87,17 @@ public abstract class CastNode {
     }
 
     int getLength() {
-        int result = 24;
-        for (CastProperty property : properties.values()) {
-            result += property.getLength();
+        if (cachedLength == -1) {
+            int result = 24;
+            for (CastProperty property : properties.values()) {
+                result += property.getLength();
+            }
+            for (CastNode child : children) {
+                result += child.getLength();
+            }
+            cachedLength = result;
         }
-        for (CastNode child : children) {
-            result += child.getLength();
-        }
-        return result;
+        return cachedLength;
     }
 
     <T extends CastNode> Optional<T> getChildOfType(Class<T> type) {
@@ -132,11 +136,13 @@ public abstract class CastNode {
 
     <T extends CastNode> T createChild(T child) {
         children.add(child);
+        cachedLength = -1;
         return child;
     }
 
     void createProperty(CastPropertyID identifier, String name, Object value) {
         properties.put(name, new CastProperty(identifier, name, value));
+        cachedLength = -1;
     }
 
     void createIntProperty(String name, int value) {
