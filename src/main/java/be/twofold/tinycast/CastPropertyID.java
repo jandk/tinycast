@@ -1,5 +1,10 @@
 package be.twofold.tinycast;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 /**
  * Enumeration of property type identifiers used by the Cast file format.
  * <p>
@@ -14,27 +19,50 @@ package be.twofold.tinycast;
  * multiplied by the array length.
  */
 public enum CastPropertyID {
-    /** 8-bit signed integer. Identifier 0x0062 ('b'). Size 1, count 1. */
+    /**
+     * 8-bit signed integer. Identifier 0x0062 ('b'). Size 1, count 1.
+     */
     BYTE(0x0062, 1, 1),
-    /** 16-bit signed integer. Identifier 0x0068 ('h'). Size 2, count 1. */
+    /**
+     * 16-bit signed integer. Identifier 0x0068 ('h'). Size 2, count 1.
+     */
     SHORT(0x0068, 2, 1),
-    /** 32-bit signed integer. Identifier 0x0069 ('i'). Size 4, count 1. */
+    /**
+     * 32-bit signed integer. Identifier 0x0069 ('i'). Size 4, count 1.
+     */
     INTEGER_32(0x0069, 4, 1),
-    /** 64-bit signed integer. Identifier 0x006c ('l'). Size 8, count 1. */
+    /**
+     * 64-bit signed integer. Identifier 0x006c ('l'). Size 8, count 1.
+     */
     INTEGER_64(0x006c, 8, 1),
-    /** 32-bit IEEE-754 floating point. Identifier 0x0066 ('f'). Size 4, count 1. */
+    /**
+     * 32-bit IEEE-754 floating point. Identifier 0x0066 ('f'). Size 4, count 1.
+     */
     FLOAT(0x0066, 4, 1),
-    /** 64-bit IEEE-754 floating point. Identifier 0x0064 ('d'). Size 8, count 1. */
+    /**
+     * 64-bit IEEE-754 floating point. Identifier 0x0064 ('d'). Size 8, count 1.
+     */
     DOUBLE(0x0064, 8, 1),
-    /** UTF-8 string. Identifier 0x0073 ('s'). Size 0 indicates variable length. Count 1. */
+    /**
+     * UTF-8 string. Identifier 0x0073 ('s'). Size 0 indicates variable length. Count 1.
+     */
     STRING(0x0073, 0, 1),
-    /** 2D vector of floats (x, y). Identifier 0x7632 ('v2'). Size 8, count 2. */
+    /**
+     * 2D vector of floats (x, y). Identifier 0x7632 ('v2'). Size 8, count 2.
+     */
     VECTOR_2(0x7632, 8, 2),
-    /** 3D vector of floats (x, y, z). Identifier 0x7633 ('v3'). Size 12, count 3. */
+    /**
+     * 3D vector of floats (x, y, z). Identifier 0x7633 ('v3'). Size 12, count 3.
+     */
     VECTOR_3(0x7633, 12, 3),
-    /** 4D vector of floats (x, y, z, w). Identifier 0x7634 ('v4'). Size 16, count 4. */
+    /**
+     * 4D vector of floats (x, y, z, w). Identifier 0x7634 ('v4'). Size 16, count 4.
+     */
     VECTOR_4(0x7634, 16, 4),
     ;
+
+    private static final Map<Short, CastPropertyID> INDEX = Arrays.stream(values())
+        .collect(Collectors.toUnmodifiableMap(CastPropertyID::getId, Function.identity()));
 
     private final short id;
     private final int size;
@@ -94,29 +122,10 @@ public enum CastPropertyID {
      * @throws CastException if the value does not map to a known property type
      */
     public static CastPropertyID fromValue(short value) throws CastException {
-        switch (value) {
-            case 0x0062:
-                return BYTE;
-            case 0x0068:
-                return SHORT;
-            case 0x0069:
-                return INTEGER_32;
-            case 0x006c:
-                return INTEGER_64;
-            case 0x0066:
-                return FLOAT;
-            case 0x0064:
-                return DOUBLE;
-            case 0x0073:
-                return STRING;
-            case 0x7632:
-                return VECTOR_2;
-            case 0x7633:
-                return VECTOR_3;
-            case 0x7634:
-                return VECTOR_4;
-            default:
-                throw new CastException("Unknown CastPropertyID: " + value);
+        CastPropertyID result = INDEX.get(value);
+        if (result == null) {
+            throw new CastException("Unknown CastPropertyID: " + value);
         }
+        return result;
     }
 }
