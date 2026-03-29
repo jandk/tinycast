@@ -1,7 +1,6 @@
 package be.twofold.tinycast;
 
 import java.nio.Buffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
@@ -98,9 +97,9 @@ public final class CastProperty {
      */
     public int getLength() {
         int length = 0x08;
-        length += name.getBytes(StandardCharsets.UTF_8).length;
+        length += byteLength(name);
         if (identifier == CastPropertyID.STRING) {
-            length += ((String) value).getBytes(StandardCharsets.UTF_8).length + 1;
+            length += byteLength((String) value) + 1;
         } else {
             length += getArrayLength() * identifier.getSize();
         }
@@ -121,6 +120,29 @@ public final class CastProperty {
         return value instanceof Buffer
             ? ((Buffer) value).remaining() / identifier.getCount()
             : 1;
+    }
+
+    private int byteLength(String s) {
+        int length = s.length();
+        for (int index = 0; index < s.length(); index++) {
+            char ch = s.charAt(index);
+            if (ch < 0x80) {
+                continue;
+            }
+            if (ch < 0x800) {
+                length++;
+                continue;
+            }
+            length += 2;
+            if (Character.isHighSurrogate(ch)) {
+                int cp = Character.codePointAt(s, index);
+                if (cp == ch) {
+                    throw new IllegalArgumentException("Unpaired surrogate at index " + index);
+                }
+                index++;
+            }
+        }
+        return length;
     }
 
     @Override
