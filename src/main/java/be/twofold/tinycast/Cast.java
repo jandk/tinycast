@@ -2,8 +2,8 @@ package be.twofold.tinycast;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see CastNode
  * @see CastNodes.Root
  */
-public final class Cast extends AbstractList<CastNode> {
+public final class Cast {
     private final AtomicLong hasher;
     private final List<CastNode> rootNodes;
 
@@ -74,27 +74,14 @@ public final class Cast extends AbstractList<CastNode> {
     }
 
     /**
-     * Returns the number of root nodes in this Cast file.
-     * <p>
-     * Root nodes represent scenes and are the top-level containers in a Cast file.
+     * Retrieves the list of root nodes in this Cast instance.
+     * Root nodes represent the highest-level entries in the hierarchy and
+     * can contain child nodes such as models, animations, and metadata.
      *
-     * @return the number of root nodes
+     * @return an unmodifiable list of root nodes in this Cast instance
      */
-    @Override
-    public int size() {
-        return rootNodes.size();
-    }
-
-    /**
-     * Returns the root node at the specified index.
-     *
-     * @param index the index of the root node to return
-     * @return the root node at the specified index
-     * @throws IndexOutOfBoundsException if the index is out of range
-     */
-    @Override
-    public CastNode get(int index) {
-        return rootNodes.get(index);
+    public List<CastNode> getRootNodes() {
+        return Collections.unmodifiableList(rootNodes);
     }
 
     /**

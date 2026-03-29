@@ -23,12 +23,12 @@ final class CastWriter {
     }
 
     private void write(Cast cast) throws IOException {
-        writer.writeInt(0x74736163); // magic
-        writer.writeInt(1);          // version
-        writer.writeInt(cast.size());      // rootNodeCount
-        writer.writeInt(0);          // flags
+        writer.writeInt(0x74736163);           // magic
+        writer.writeInt(1);                    // version
+        writer.writeInt(cast.getRootNodes().size()); // rootNodeCount
+        writer.writeInt(0);                    // flags
 
-        for (CastNode rootNode : cast) {
+        for (CastNode rootNode : cast.getRootNodes()) {
             writeNode(rootNode);
         }
     }
