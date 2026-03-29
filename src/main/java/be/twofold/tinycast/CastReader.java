@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 final class CastReader {
     private static final Map<CastNodeID, Set<String>> ARRAY_TYPES = Map.of(
@@ -22,6 +23,7 @@ final class CastReader {
     );
 
     private final BinaryReader reader;
+    private long maxHash = 0;
 
     CastReader(BinaryReader reader) {
         this.reader = Objects.requireNonNull(reader);
@@ -54,14 +56,16 @@ final class CastReader {
             throw new CastException("Invalid flags: " + flags);
         }
 
+        AtomicLong hasher = new AtomicLong();
         List<CastNode> rootNodes = new ArrayList<>(rootNodeCount);
         for (int i = 0; i < rootNodeCount; i++) {
-            rootNodes.add(readNode());
+            rootNodes.add(readNode(hasher));
         }
-        return new Cast(rootNodes);
+        hasher.set(maxHash + 1);
+        return new Cast(hasher, rootNodes);
     }
 
-    private CastNode readNode() throws IOException {
+    private CastNode readNode(AtomicLong hasher) throws IOException {
         CastNodeID identifier;
         try {
             identifier = CastNodeID.fromValue(reader.readInt());
@@ -70,6 +74,9 @@ final class CastReader {
         }
         int nodeSize = reader.readInt();
         long nodeHash = reader.readLong();
+        if (Long.compareUnsigned(nodeHash, maxHash) > 0) {
+            maxHash = nodeHash;
+        }
         int propertyCount = reader.readInt();
         int childCount = reader.readInt();
 
@@ -81,10 +88,10 @@ final class CastReader {
 
         List<CastNode> children = new ArrayList<>(childCount);
         for (int i = 0; i < childCount; i++) {
-            children.add(readNode());
+            children.add(readNode(hasher));
         }
 
-        return CastNodes.create(identifier, nodeHash, properties, children);
+        return CastNodes.create(identifier, hasher, nodeHash, properties, children);
     }
 
     private CastProperty readProperty(CastNodeID typeId) throws IOException {

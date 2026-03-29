@@ -88,6 +88,7 @@ final class TypeClassWriter {
             .addModifiers(Modifier.STATIC)
             .returns(CastNode.class)
             .addParameter(CastNodeID.class, "identifier")
+            .addParameter(AtomicLong.class, "hasher")
             .addParameter(long.class, "nodeHash")
             .addParameter(ParameterizedTypeName.get(Map.class, String.class, CastProperty.class), "properties")
             .addParameter(ParameterizedTypeName.get(List.class, CastNode.class), "children")
@@ -96,7 +97,7 @@ final class TypeClassWriter {
         for (CastNodeID id : CastNodeID.values()) {
             methodBuilder
                 .beginControlFlow("case $L:", id)
-                .addStatement("return new $T(nodeHash, properties, children)", OUTER_CLASS.nestedClass(className(id)))
+                .addStatement("return new $T(hasher, nodeHash, properties, children)", OUTER_CLASS.nestedClass(className(id)))
                 .endControlFlow();
         }
 
@@ -130,10 +131,11 @@ final class TypeClassWriter {
             .build());
 
         builder.addMethod(MethodSpec.constructorBuilder()
+            .addParameter(AtomicLong.class, "hasher")
             .addParameter(long.class, "hash")
             .addParameter(ParameterizedTypeName.get(Map.class, String.class, CastProperty.class), "properties")
             .addParameter(ParameterizedTypeName.get(List.class, CastNode.class), "children")
-            .addStatement("super($T.$L, hash, properties, children)", CastNodeID.class, type.type())
+            .addStatement("super($T.$L, hash, hasher, properties, children)", CastNodeID.class, type.type())
             .addComment("TODO: Validation")
             .build());
 

@@ -26,13 +26,13 @@ public final class Cast {
     private final AtomicLong hasher;
     private final List<CastNode> rootNodes;
 
-    Cast(List<CastNode> rootNodes) {
-        this(0, rootNodes);
+    Cast(AtomicLong hasher, List<CastNode> rootNodes) {
+        this.hasher = Objects.requireNonNull(hasher);
+        this.rootNodes = Objects.requireNonNull(rootNodes);
     }
 
     private Cast(long initialHash, List<CastNode> rootNodes) {
-        this.hasher = new AtomicLong(initialHash);
-        this.rootNodes = Objects.requireNonNull(rootNodes);
+        this(new AtomicLong(initialHash), rootNodes);
     }
 
     /**

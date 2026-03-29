@@ -43,7 +43,7 @@ public abstract class CastNode {
     final List<CastNode> children;
     private int cachedLength = -1;
 
-    private CastNode(CastNodeID identifier, long hash, AtomicLong hasher, Map<String, CastProperty> properties, List<CastNode> children) {
+    CastNode(CastNodeID identifier, long hash, AtomicLong hasher, Map<String, CastProperty> properties, List<CastNode> children) {
         this.identifier = Objects.requireNonNull(identifier);
         this.hash = hash;
         this.hasher = hasher;
@@ -53,10 +53,6 @@ public abstract class CastNode {
 
     CastNode(CastNodeID identifier, AtomicLong hasher) {
         this(identifier, hasher.getAndIncrement(), hasher, Map.of(), List.of());
-    }
-
-    CastNode(CastNodeID identifier, long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-        this(identifier, hash, null, properties, children);
     }
 
     /**

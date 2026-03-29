@@ -17,62 +17,62 @@ public final class CastNodes {
     private CastNodes() {
     }
 
-    static CastNode create(CastNodeID identifier, long nodeHash,
-            Map<String, CastProperty> properties, List<CastNode> children) {
+    static CastNode create(CastNodeID identifier, AtomicLong hasher, long nodeHash,
+                           Map<String, CastProperty> properties, List<CastNode> children) {
         switch (identifier) {
             case ROOT: {
-                return new Root(nodeHash, properties, children);
+                return new Root(hasher, nodeHash, properties, children);
             }
             case MODEL: {
-                return new Model(nodeHash, properties, children);
+                return new Model(hasher, nodeHash, properties, children);
             }
             case MESH: {
-                return new Mesh(nodeHash, properties, children);
+                return new Mesh(hasher, nodeHash, properties, children);
             }
             case HAIR: {
-                return new Hair(nodeHash, properties, children);
+                return new Hair(hasher, nodeHash, properties, children);
             }
             case BLEND_SHAPE: {
-                return new BlendShape(nodeHash, properties, children);
+                return new BlendShape(hasher, nodeHash, properties, children);
             }
             case SKELETON: {
-                return new Skeleton(nodeHash, properties, children);
+                return new Skeleton(hasher, nodeHash, properties, children);
             }
             case BONE: {
-                return new Bone(nodeHash, properties, children);
+                return new Bone(hasher, nodeHash, properties, children);
             }
             case IK_HANDLE: {
-                return new IkHandle(nodeHash, properties, children);
+                return new IkHandle(hasher, nodeHash, properties, children);
             }
             case CONSTRAINT: {
-                return new Constraint(nodeHash, properties, children);
+                return new Constraint(hasher, nodeHash, properties, children);
             }
             case ANIMATION: {
-                return new Animation(nodeHash, properties, children);
+                return new Animation(hasher, nodeHash, properties, children);
             }
             case CURVE: {
-                return new Curve(nodeHash, properties, children);
+                return new Curve(hasher, nodeHash, properties, children);
             }
             case CURVE_MODE_OVERRIDE: {
-                return new CurveModeOverride(nodeHash, properties, children);
+                return new CurveModeOverride(hasher, nodeHash, properties, children);
             }
             case NOTIFICATION_TRACK: {
-                return new NotificationTrack(nodeHash, properties, children);
+                return new NotificationTrack(hasher, nodeHash, properties, children);
             }
             case MATERIAL: {
-                return new Material(nodeHash, properties, children);
+                return new Material(hasher, nodeHash, properties, children);
             }
             case FILE: {
-                return new File(nodeHash, properties, children);
+                return new File(hasher, nodeHash, properties, children);
             }
             case COLOR: {
-                return new Color(nodeHash, properties, children);
+                return new Color(hasher, nodeHash, properties, children);
             }
             case INSTANCE: {
-                return new Instance(nodeHash, properties, children);
+                return new Instance(hasher, nodeHash, properties, children);
             }
             case METADATA: {
-                return new Metadata(nodeHash, properties, children);
+                return new Metadata(hasher, nodeHash, properties, children);
             }
         }
         throw new UnsupportedOperationException();
@@ -306,8 +306,9 @@ public final class CastNodes {
             super(CastNodeID.ROOT, hasher);
         }
 
-        Root(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.ROOT, hash, properties, children);
+        Root(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+             List<CastNode> children) {
+            super(CastNodeID.ROOT, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -392,8 +393,9 @@ public final class CastNodes {
             super(CastNodeID.MODEL, hasher);
         }
 
-        Model(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.MODEL, hash, properties, children);
+        Model(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+              List<CastNode> children) {
+            super(CastNodeID.MODEL, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -580,8 +582,9 @@ public final class CastNodes {
             super(CastNodeID.MESH, hasher);
         }
 
-        Mesh(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.MESH, hash, properties, children);
+        Mesh(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+             List<CastNode> children) {
+            super(CastNodeID.MESH, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -887,8 +890,9 @@ public final class CastNodes {
             super(CastNodeID.HAIR, hasher);
         }
 
-        Hair(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.HAIR, hash, properties, children);
+        Hair(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+             List<CastNode> children) {
+            super(CastNodeID.HAIR, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -981,8 +985,9 @@ public final class CastNodes {
             super(CastNodeID.BLEND_SHAPE, hasher);
         }
 
-        BlendShape(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.BLEND_SHAPE, hash, properties, children);
+        BlendShape(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                   List<CastNode> children) {
+            super(CastNodeID.BLEND_SHAPE, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -1095,8 +1100,9 @@ public final class CastNodes {
             super(CastNodeID.SKELETON, hasher);
         }
 
-        Skeleton(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.SKELETON, hash, properties, children);
+        Skeleton(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                 List<CastNode> children) {
+            super(CastNodeID.SKELETON, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -1163,8 +1169,9 @@ public final class CastNodes {
             super(CastNodeID.BONE, hasher);
         }
 
-        Bone(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.BONE, hash, properties, children);
+        Bone(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+             List<CastNode> children) {
+            super(CastNodeID.BONE, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -1337,8 +1344,9 @@ public final class CastNodes {
             super(CastNodeID.IK_HANDLE, hasher);
         }
 
-        IkHandle(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.IK_HANDLE, hash, properties, children);
+        IkHandle(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                 List<CastNode> children) {
+            super(CastNodeID.IK_HANDLE, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -1511,8 +1519,9 @@ public final class CastNodes {
             super(CastNodeID.CONSTRAINT, hasher);
         }
 
-        Constraint(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.CONSTRAINT, hash, properties, children);
+        Constraint(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                   List<CastNode> children) {
+            super(CastNodeID.CONSTRAINT, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -1736,8 +1745,9 @@ public final class CastNodes {
             super(CastNodeID.ANIMATION, hasher);
         }
 
-        Animation(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.ANIMATION, hash, properties, children);
+        Animation(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                  List<CastNode> children) {
+            super(CastNodeID.ANIMATION, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -1882,8 +1892,9 @@ public final class CastNodes {
             super(CastNodeID.CURVE, hasher);
         }
 
-        Curve(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.CURVE, hash, properties, children);
+        Curve(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+              List<CastNode> children) {
+            super(CastNodeID.CURVE, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -2038,9 +2049,9 @@ public final class CastNodes {
             super(CastNodeID.CURVE_MODE_OVERRIDE, hasher);
         }
 
-        CurveModeOverride(long hash, Map<String, CastProperty> properties,
-                List<CastNode> children) {
-            super(CastNodeID.CURVE_MODE_OVERRIDE, hash, properties, children);
+        CurveModeOverride(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                          List<CastNode> children) {
+            super(CastNodeID.CURVE_MODE_OVERRIDE, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -2153,9 +2164,9 @@ public final class CastNodes {
             super(CastNodeID.NOTIFICATION_TRACK, hasher);
         }
 
-        NotificationTrack(long hash, Map<String, CastProperty> properties,
-                List<CastNode> children) {
-            super(CastNodeID.NOTIFICATION_TRACK, hash, properties, children);
+        NotificationTrack(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                          List<CastNode> children) {
+            super(CastNodeID.NOTIFICATION_TRACK, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -2210,8 +2221,9 @@ public final class CastNodes {
             super(CastNodeID.MATERIAL, hasher);
         }
 
-        Material(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.MATERIAL, hash, properties, children);
+        Material(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                 List<CastNode> children) {
+            super(CastNodeID.MATERIAL, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -2541,8 +2553,9 @@ public final class CastNodes {
             super(CastNodeID.FILE, hasher);
         }
 
-        File(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.FILE, hash, properties, children);
+        File(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+             List<CastNode> children) {
+            super(CastNodeID.FILE, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -2575,8 +2588,9 @@ public final class CastNodes {
             super(CastNodeID.COLOR, hasher);
         }
 
-        Color(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.COLOR, hash, properties, children);
+        Color(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+              List<CastNode> children) {
+            super(CastNodeID.COLOR, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -2649,8 +2663,9 @@ public final class CastNodes {
             super(CastNodeID.INSTANCE, hasher);
         }
 
-        Instance(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.INSTANCE, hash, properties, children);
+        Instance(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                 List<CastNode> children) {
+            super(CastNodeID.INSTANCE, hash, hasher, properties, children);
             // TODO: Validation
         }
 
@@ -2781,8 +2796,9 @@ public final class CastNodes {
             super(CastNodeID.METADATA, hasher);
         }
 
-        Metadata(long hash, Map<String, CastProperty> properties, List<CastNode> children) {
-            super(CastNodeID.METADATA, hash, properties, children);
+        Metadata(AtomicLong hasher, long hash, Map<String, CastProperty> properties,
+                 List<CastNode> children) {
+            super(CastNodeID.METADATA, hash, hasher, properties, children);
             // TODO: Validation
         }
 
