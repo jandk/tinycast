@@ -86,25 +86,25 @@ void main() {
     CastNodes.Root root = cast.createRoot();
 
     CastNodes.Model model = root.createModel()
-            .setName("Triangle");
+        .setName("Triangle");
 
     // A single triangle (3 vertices, xyz per vertex)
     float[] positions = {
-            -1f, -1f, 0f,
-            1f, -1f, 0f,
-            0f, 1f, 0f
+        -1f, -1f, 0f,
+        1f, -1f, 0f,
+        0f, 1f, 0f
     };
 
     // One face (3 indices)
     int[] faces = {0, 1, 2};
 
     model.createMesh()
-            .setName("Triangle")
-            .setVertexPositionBuffer(FloatBuffer.wrap(positions))
-            .setFaceBuffer(IntBuffer.wrap(faces))
-            .setUVLayerCount(0)
-            .setColorLayerCount(0)
-            .setMaximumWeightInfluence(0);
+        .setName("Triangle")
+        .setVertexPositionBuffer(FloatBuffer.wrap(positions))
+        .setFaceBuffer(IntBuffer.wrap(faces))
+        .setUVLayerCount(0)
+        .setColorLayerCount(0)
+        .setMaximumWeightInfluence(0);
 
     try (OutputStream out = Files.newOutputStream(Path.of("triangle.cast"))) {
         cast.write(out);
