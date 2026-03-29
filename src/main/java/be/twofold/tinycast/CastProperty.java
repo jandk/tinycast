@@ -40,6 +40,13 @@ public final class CastProperty {
         this.identifier = Objects.requireNonNull(identifier);
         this.name = Objects.requireNonNull(name);
         this.value = Objects.requireNonNull(value);
+
+        if (value instanceof Buffer) {
+            int remaining = ((Buffer) value).remaining();
+            if (remaining % identifier.getCount() != 0) {
+                throw new IllegalArgumentException("Remaining buffer size is not a multiple of count");
+            }
+        }
     }
 
     /**
@@ -104,22 +111,16 @@ public final class CastProperty {
      * Returns the number of logical values represented by {@link #getValue()} when it is an array.
      * <p>
      * For non-array values (i.e., when the value is not a {@link Buffer}), this returns {@code 1}.
-     * When the value is a NIO {@link Buffer}, its {@code limit()} indicates the number of stored
-     * elements. For vector types, {@link CastPropertyID#getCount()} elements form one logical value,
-     * so the returned array length is {@code limit() / identifier.getCount()}.
+     * When the value is a NIO {@link Buffer}, the buffer's {@code remaining()} elements are used.
+     * For vector types, {@link CastPropertyID#getCount()} elements form one logical value, so the
+     * returned array length is {@code remaining() / identifier.getCount()}.
      *
      * @return the array length in number of logical values (at least {@code 1})
-     * @throws IllegalArgumentException if the buffer limit is not a multiple of {@code identifier.getCount()}
      */
     public int getArrayLength() {
-        if (!(value instanceof Buffer)) {
-            return 1;
-        }
-        int remaining = ((Buffer) value).remaining();
-        if (remaining % identifier.getCount() != 0) {
-            throw new IllegalArgumentException("Limit of buffer is not a multiple of count");
-        }
-        return remaining / identifier.getCount();
+        return value instanceof Buffer
+            ? ((Buffer) value).remaining() / identifier.getCount()
+            : 1;
     }
 
     @Override
