@@ -676,6 +676,8 @@ public final class CastNodes {
 
         /**
          * Returns the number of {@code "c%d"} properties (Vertex Color Buffer).
+         *
+         * @return The number of {@code "c%d"} properties
          */
         public int getVertexColorBufferCount() {
             for (int count = 0; ; count++) {
@@ -719,6 +721,8 @@ public final class CastNodes {
 
         /**
          * Returns the number of {@code "u%d"} properties (Vertex UV Buffer).
+         *
+         * @return The number of {@code "u%d"} properties
          */
         public int getVertexUVBufferCount() {
             for (int count = 0; ; count++) {
@@ -2551,6 +2555,8 @@ public final class CastNodes {
 
         /**
          * Returns the number of {@code "extra%d"} properties (Extra).
+         *
+         * @return The number of {@code "extra%d"} properties
          */
         public int getExtraCount() {
             for (int count = 0; ; count++) {

@@ -194,7 +194,9 @@ final class TypeClassWriter {
     private MethodSpec generatePropertyCount(PropertyDef property) {
         String prefix = property.getKey().replace("%d", "");
         return MethodSpec.methodBuilder("get" + property.upperCamelCase() + "Count")
-            .addJavadoc("Returns the number of {@code \"" + property.getKey() + "\"} properties (" + property.getName() + ").")
+            .addJavadoc("Returns the number of {@code \"" + property.getKey() + "\"} properties (" + property.getName() + ").\n" +
+                "\n" +
+                "@return The number of {@code \"" + property.getKey() + "\"} properties")
             .addModifiers(Modifier.PUBLIC)
             .returns(int.class)
             .beginControlFlow("for (int count = 0; ; count++)")

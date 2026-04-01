@@ -137,6 +137,7 @@ public final class Cast {
      *
      * @param hash the hash to search for
      * @param type the expected type of the node
+     * @param <T>  the expected type of the node
      * @return the node with the given hash cast to the expected type, or empty if not found or wrong type
      */
     public <T extends CastNode> Optional<T> findNodeByHash(long hash, Class<T> type) {
