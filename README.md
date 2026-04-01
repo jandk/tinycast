@@ -18,8 +18,8 @@ For the file format itself, see the reference here:
 ## Why
 
 I had an implementation lingering in [Valen](https://github.com/jandk/valen), and turning it into a shared library that
-can be reused by others wasn't too much trouble.
-Also helps fixing any remaining issues that I had with it, and writing documentation and some basic tests.
+others can reuse wasn't too much trouble.
+Also helps to fix any remaining issues that I had with it, writing documentation and some basic tests.
 Can be used for both reading and writing files — without adopting a full DCC or a heavyweight engine SDK.
 `tinycast` gives you a typed, model-centric API that feels like the file: nodes, properties, buffers.
 
@@ -31,7 +31,7 @@ Maven coordinates:
 <dependency>
     <groupId>be.twofold</groupId>
     <artifactId>tinycast</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
 </dependency>
 ```
 
@@ -55,10 +55,10 @@ import be.twofold.tinycast.CastException;
 import be.twofold.tinycast.CastNode;
 import be.twofold.tinycast.CastNodes;
 
-void main() throws IOException, CastException {
+void main() throws IOException {
     try (InputStream in = Files.newInputStream(Path.of("scene.cast"))) {
         Cast cast = Cast.read(in);
-        for (CastNode root : cast) {
+        for (CastNode root : cast.getRootNodes()) {
             CastNodes.Root scene = (CastNodes.Root) root;
             for (CastNodes.Model model : scene.getModels()) {
                 System.out.println("Model: " + model.getName().orElse("<unnamed>"));
@@ -108,7 +108,7 @@ void main() {
 
     try (OutputStream out = Files.newOutputStream(Path.of("triangle.cast"))) {
         cast.write(out);
-    } catch (CastException | IOException e) {
+    } catch (IOException e) {
         throw new RuntimeException(e);
     }
 }
@@ -165,7 +165,7 @@ If you bump into a variant in the wild, please file an issue with a sample.
 
 - No automatic tangent generation or topology helpers — bring your own
 - No validation beyond what the spec and the types enforce
-- Material extras are passthrough hashes; resolve them in your app
+- Material extras are pass-through hashes; resolve them in your app
 
 ## Acknowledgements
 
